@@ -1,4 +1,3 @@
-import statistics
 from rest_framework.response import Response
 from .models import User
 from rest_framework.decorators import action

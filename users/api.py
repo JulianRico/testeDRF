@@ -12,9 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     @action(detail=False, methods=['get'], url_path='(?P<name>[^/.]+)')
-    def retrieve_by_name(self, request, name=None):
-        print(name)
-        print('Ingresó a la función')
+    def retrieve_by_name(self, name=None):
         user = self.queryset.filter(name=name).first()
 
         if user is None:
@@ -22,3 +20,19 @@ class UserViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put'], url_path='(?P<id>[^/.]+)')
+    def put(self, request, id=None, *args, **kwargs):
+        print(id)
+        instance = self.queryset.filter(id=id).first()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['delete'], url_path='(?P<idDelete>[^/.]+)')
+    def delete(self, request, idDelete=None, *args, **kwargs):
+        instance = self.queryset.filter(id=idDelete).first()
+        instance.delete()
+        print(instance)
+        return Response({'msj': 'Usuario ${instance}'}, status=status.HTTP_204_NO_CONTENT)

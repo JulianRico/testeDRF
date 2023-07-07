@@ -5,7 +5,6 @@ import jwt
 
 class IsAuthenticatedByJWT(BasePermission):
     def has_permission(self, request, view):
-        print(request.META.get('HTTP_AUTHORIZATION', '').split(' '))
         token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')
         if token == ['']:
             return False

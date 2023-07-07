@@ -22,7 +22,6 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from users.api import UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),

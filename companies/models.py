@@ -8,7 +8,7 @@ class Companie(models.Model):
     nit = models.CharField(max_length=30)
     email = models.EmailField()
     address = models.CharField(max_length=200)
-    userCompany = models.CharField(max_length=200)
+    userCompany = models.CharField(max_length=500)
     phone = models.CharField(max_length=200)
     manager = models.CharField(max_length=500)
     create_at = models.DateTimeField(auto_now_add=True)

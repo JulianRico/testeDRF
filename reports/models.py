@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import User
-from companies.models import Companie
+from companies.models import Companie, UserCompany
 
 # Create your models here.
 
@@ -16,6 +16,9 @@ class Report(models.Model):
                              on_delete=models.CASCADE, blank=True, null=True)
     companie = models.ForeignKey(
         Companie, related_name='reports', on_delete=models.CASCADE, blank=True, null=True)
+
+    userCompany = models.ForeignKey(
+        UserCompany, related_name='reports', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return str(self.id)

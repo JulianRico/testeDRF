@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'users',
     'companies',
     'reports'
+
 ]
 
 MIDDLEWARE = [
@@ -109,7 +110,7 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
-        default='sqlite:///db.sqlite3',
+        default='sqlite:///db2.sqlite3',
         conn_max_age=600
     )
 }

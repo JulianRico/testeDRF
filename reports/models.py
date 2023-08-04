@@ -9,6 +9,10 @@ class Report(models.Model):
     questionsmtto = models.JSONField()
     questionviews = models.JSONField()
     questionsdeterioration = models.JSONField()
+    tankidentification = models.JSONField()
+    observationsandresults = models.JSONField()
+    signatures = models.JSONField()
+
     SelfStatus = ((1, "Espera"), (2, "Rechazado"), (3, "Aprobado"))
     status = models.IntegerField(choices=SelfStatus, default=1)
     create_at = models.DateTimeField(auto_now_add=True)

@@ -32,7 +32,7 @@ class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ('id', 'status_display', 'status', 'questionsmtto', 'questionviews', 'tankidentification', 'observationsandresults', 'signatures',
-                  'questionsdeterioration', 'user', 'companie', 'userCompany', 'create_at')
+                  'questionsdeterioration', 'photos', 'user', 'companie', 'userCompany', 'create_at')
         read_only_fields = ('create_at', 'id')
 
     def get_status_display(self, obj):

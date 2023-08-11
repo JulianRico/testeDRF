@@ -12,6 +12,7 @@ class Report(models.Model):
     tankidentification = models.JSONField()
     observationsandresults = models.JSONField()
     signatures = models.JSONField()
+    photos = models.JSONField()
 
     SelfStatus = ((1, "Espera"), (2, "Rechazado"), (3, "Aprobado"))
     status = models.IntegerField(choices=SelfStatus, default=1)

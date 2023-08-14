@@ -7,19 +7,19 @@ from companies.models import Companie, UserCompany
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id')
+        fields = ('id',)
 
 
 class CompanieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Companie
-        fields = ('id')
+        fields = ('id',)
 
 
 class UserCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
-        fields = ('id')
+        fields = ('id',)
 
 
 class ReportSerializer(serializers.ModelSerializer):
@@ -36,3 +36,22 @@ class ReportSerializer(serializers.ModelSerializer):
 
     def get_status_display(self, obj):
         return dict(Report.SelfStatus).get(obj.status)
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        companie_data = validated_data.pop('companie')
+        user_company_data = validated_data.pop('userCompany')
+
+        user, _ = User.objects.get_or_create(**user_data)
+        companie, _ = Companie.objects.get_or_create(**companie_data)
+        user_company, _ = UserCompany.objects.get_or_create(
+            **user_company_data)
+
+        report = Report.objects.create(
+            user=user,
+            companie=companie,
+            userCompany=user_company,
+            **validated_data
+        )
+
+        return report

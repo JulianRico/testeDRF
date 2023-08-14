@@ -7,19 +7,19 @@ from companies.models import Companie, UserCompany
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id',)
+        fields = ('name',)
 
 
 class CompanieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Companie
-        fields = ('id',)
+        fields = ('name',)
 
 
 class UserCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
-        fields = ('id',)
+        fields = ('usuario',)
 
 
 class ReportSerializer(serializers.ModelSerializer):

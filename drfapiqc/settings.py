@@ -179,3 +179,12 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# Tu dirección de correo electrónico de Gmail
+EMAIL_HOST_USER = 'julianrico@outlook.com'
+# La contraseña de tu cuenta de Gmail
+EMAIL_HOST_PASSWORD = '14703939julian'

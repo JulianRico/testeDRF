@@ -1,8 +1,14 @@
+from django.urls import path
 from rest_framework import routers
 from .api import ReportViewSet
+from .views import SVGtoPDFView
 
 router = routers.DefaultRouter()
 
-router.register('api/reports', ReportViewSet,'reports')
+router.register(r'api/reports', ReportViewSet, 'reports')
 
-urlpatterns = router.urls
+urlpatterns = [
+    path(r'api/pdfcreate/<int:id_report>/',
+         SVGtoPDFView.as_view(), name='ReportePDF'),
+    *router.urls
+]

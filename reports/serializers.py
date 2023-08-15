@@ -57,7 +57,7 @@ class ReportSerializer(serializers.ModelSerializer):
             **validated_data
         )
 
-        print(report.id)
+        print(report)
         self.send_email(report.id)
         return report
 

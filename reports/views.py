@@ -111,7 +111,7 @@ class SVGtoPDFView(View):
                                    options=options)
 
             print("PDF generado exitosamente en:", temp_pdf_path.name)
-            temp_pdf_path.close()
+
             return temp_pdf_path.name
 
         except Exception as e:

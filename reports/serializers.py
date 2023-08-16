@@ -62,9 +62,9 @@ class ReportSerializer(serializers.ModelSerializer):
 
     def send_email(self, id):
         # Reemplaza con la URL real
-        url_revisar = f'http://127.0.0.1:8000/api/pdfcreate/{id}'
+        url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
         # Reemplaza con la URL real
-        url_aprobar = f'http://127.0.0.1:8000/api/pdfcreate/{id}'
+        url_aprobar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
 
         subject = 'Informe para su revisión y aprobación'
         from_email = 'julianrico@outlook.com'

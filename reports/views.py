@@ -119,7 +119,7 @@ class SVGtoPDFView(View):
     def send_email_with_attachment(self, id, namecompanie, correoempresa, correousuario, correousuarioempresa, fecha):
 
         # Reemplaza con la URL real
-        url_descargar = f'http://127.0.0.1:8000/api/pdfcreate/{id}'
+        url_descargar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
 
         subject = 'Entrega de Reporte Q-Checker S.A.S'
         from_email = 'julianrico@outlook.com'

@@ -24,7 +24,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
     JSONsignatures = json.loads(signatures)
     JSONphotos = json.loads(photos)
 
-    print(companieuser.id, companie.id, user.id)
+    print(JSONtank_identification['hermeticidad']["cumple"])
 
     def downloadImage(url):
         response = requests.get(url)
@@ -1120,7 +1120,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-18"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="67.103004"
-         y="89.08992">X</tspan></text><text
+         y="89.08992">{ 'X' if JSONtank_identification['hermeticidad']["presenta"] == "N/A" else "" }</tspan></text><text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.306001;stroke-dasharray:none;stroke-opacity:1"
        x="58.235996"
@@ -1129,7 +1129,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-77"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="58.235996"
-         y="89.179489">X</tspan></text><g
+         y="89.179489">{ 'X' if JSONtank_identification['hermeticidad']["presenta"] == "NO" else "" }</tspan></text><g
        clip-path="url(#clipEmfPath3)"
        id="g11353"
        transform="matrix(0.13030134,0,0,0.12421712,0.00411059,2.7917926e-4)"><text
@@ -5714,7 +5714,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-37"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="48.831593"
-         y="88.910789">X</tspan></text><text
+         y="88.910789">{ 'X' if JSONtank_identification['hermeticidad']["presenta"] == "SÍ" else "" }</tspan></text><text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.306001;stroke-dasharray:none;stroke-opacity:1"
        x="67.192574"
@@ -6232,7 +6232,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-905-67-42-99-2"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="191.8233"
-         y="88.821228">X</tspan></text><text
+         y="88.821228">{'X' if JSONtank_identification['hermeticidad']["cumple"] == True else " "}</tspan></text><text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.306002;stroke-dasharray:none;stroke-opacity:1"
        x="207.0047"
@@ -6241,7 +6241,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-905-67-42-39"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="207.0047"
-         y="88.821228">X</tspan></text><text
+         y="88.821228">{'X' if JSONtank_identification['hermeticidad']["cumple"] == False else " "}</tspan></text><text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.306002;stroke-dasharray:none;stroke-opacity:1"
        x="207.18382"
@@ -6313,10 +6313,10 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan30642-905-67-42-47"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;font-family:Arial;-inkscape-font-specification:'Arial Bold';stroke-width:0.306"
          x="207.0047"
-         y="132.35017">X</tspan></text><path
+         y="132.35017">X</tspan></text>{'''<path
        d="m 180.72535,87.827024 c 0.007,0.0084 0.0237,0.02963 0.0517,0.09083 0.0135,0.02941 0.0236,0.05411 0.0429,0.09959 0.008,0.01958 0.0204,0.04798 0.0338,0.07692 0.0332,0.07572 0.0744,0.181422 0.13027,0.309923 0.0421,0.09676 0.0978,0.216747 0.17203,0.33551 0.0156,0.02987 0.0357,0.06081 0.0619,0.09034 0.0348,0.0393 0.0794,0.07499 0.13409,0.100462 0.0539,0.0251 0.11017,0.03678 0.16463,0.03747 0.0527,6.69e-4 0.10011,-0.0089 0.14023,-0.02258 0.0394,-0.01343 0.0737,-0.03142 0.10259,-0.05034 0.0287,-0.01879 0.054,-0.03981 0.076,-0.06151 0.0336,-0.03311 0.0637,-0.07178 0.0879,-0.114564 0.0485,-0.06894 0.0892,-0.138894 0.12118,-0.193135 0.0387,-0.0656 0.0668,-0.111608 0.0974,-0.151774 0.003,-0.0044 0.007,-0.0089 0.01,-0.01341 0.44577,-0.647021 0.92583,-1.15605 1.46199,-1.521096 0.1375,-0.09427 0.25309,-0.162413 0.32322,-0.202331 a 0.3405575,0.3405575 90 0 0 -0.33698,-0.59192 c -0.0805,0.04585 -0.2134,0.124179 -0.37047,0.23186 -0.62067,0.422579 -1.15573,0.997354 -1.63425,1.690697 -0.056,0.07434 -0.10104,0.150506 -0.13717,0.211717 -0.0399,0.06759 -0.068,0.115312 -0.0997,0.158547 -0.013,0.01773 -0.0242,0.03667 -0.0335,0.05656 0.009,-0.01884 0.0199,-0.03387 0.0328,-0.04658 0.007,-0.0069 0.0163,-0.0148 0.0284,-0.02272 0.0121,-0.0079 0.0291,-0.01723 0.0512,-0.02477 0.0226,-0.0077 0.0525,-0.01417 0.088,-0.01372 0.037,4.71e-4 0.0764,0.0085 0.11423,0.02613 0.0384,0.01786 0.0675,0.04198 0.0883,0.06542 0.0206,0.02324 0.0319,0.04459 0.0377,0.05779 l -0.0252,-0.04697 c -0.0503,-0.0785 -0.0924,-0.166374 -0.13168,-0.256678 -0.0479,-0.110072 -0.0914,-0.221411 -0.13383,-0.317893 -0.0112,-0.02437 -0.0198,-0.04459 -0.0278,-0.0633 -0.0163,-0.03831 -0.032,-0.07648 -0.0508,-0.117459 -0.0501,-0.109349 -0.0967,-0.180536 -0.14272,-0.237111 a 0.3405575,0.3405575 90 0 0 -0.52816,0.430086 z"
        id="path-1"
-       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.293169;stroke-dasharray:none;stroke-opacity:1" /><path
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.293169;stroke-dasharray:none;stroke-opacity:1" />''' if JSONtank_identification['hermeticidad']["defectologia"] == True else " " }<path
        d="m 180.74705,114.84933 c 0.007,0.008 0.0237,0.0296 0.0517,0.0908 0.0135,0.0294 0.0236,0.0541 0.0429,0.0996 0.008,0.0196 0.0204,0.048 0.0338,0.0769 0.0332,0.0757 0.0744,0.18142 0.13027,0.30992 0.0421,0.0968 0.0978,0.21674 0.17202,0.33551 0.0156,0.0299 0.0357,0.0608 0.0619,0.0903 0.0348,0.0393 0.0794,0.075 0.13412,0.10048 0.0539,0.0251 0.11019,0.0368 0.16466,0.0375 0.0527,6.6e-4 0.10012,-0.009 0.14023,-0.0226 0.0394,-0.0134 0.0737,-0.0314 0.10257,-0.0503 0.0287,-0.0188 0.054,-0.0398 0.076,-0.0615 0.0336,-0.0331 0.0636,-0.0718 0.0879,-0.11454 0.0485,-0.0689 0.0892,-0.13889 0.12118,-0.19313 0.0387,-0.0656 0.0667,-0.1116 0.0974,-0.15177 0.003,-0.004 0.007,-0.009 0.01,-0.0134 0.44577,-0.64702 0.92582,-1.15605 1.46199,-1.52109 0.1375,-0.0943 0.25309,-0.16241 0.32322,-0.20233 a 0.3405575,0.3405575 90 0 0 -0.33698,-0.59192 c -0.0805,0.0459 -0.2134,0.12418 -0.37046,0.23185 -0.62069,0.42259 -1.15574,0.99736 -1.63426,1.6907 -0.0559,0.0743 -0.10103,0.1505 -0.13717,0.21171 -0.0399,0.0676 -0.068,0.1153 -0.0996,0.15854 -0.013,0.0177 -0.0242,0.0367 -0.0335,0.0566 0.009,-0.0188 0.0199,-0.0338 0.0328,-0.0465 0.007,-0.007 0.0163,-0.0148 0.0283,-0.0227 0.0121,-0.008 0.0291,-0.0172 0.0512,-0.0248 0.0226,-0.008 0.0524,-0.0142 0.088,-0.0137 0.037,4.6e-4 0.0764,0.008 0.11426,0.0261 0.0384,0.0179 0.0676,0.042 0.0883,0.0654 0.0206,0.0233 0.0319,0.0446 0.0377,0.0578 l -0.0252,-0.047 c -0.0504,-0.0785 -0.0924,-0.16638 -0.13168,-0.25669 -0.0479,-0.11007 -0.0914,-0.22141 -0.13383,-0.31789 -0.0112,-0.0244 -0.0198,-0.0446 -0.0278,-0.0633 -0.0162,-0.0383 -0.032,-0.0765 -0.0508,-0.11746 -0.0501,-0.10935 -0.0967,-0.18053 -0.14272,-0.23711 a 0.3405575,0.3405575 90 0 0 -0.52816,0.43008 z"
        id="path-1-3"
        style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.293169;stroke-dasharray:none;stroke-opacity:1" /><path
@@ -6549,7 +6549,7 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
          id="tspan2071"
          style="stroke-width:0.557"
          x="96.255066"
-         y="88.490967">observacion</tspan></text><text
+         y="88.490967">{ str(JSONtank_identification['hermeticidad']["comentario"]) if JSONtank_identification['hermeticidad']["comentario"] != "" else " "}</tspan></text><text
        xml:space="preserve"
        style="font-size:1.94015px;font-family:Arial;-inkscape-font-specification:Arial;fill:#000000;stroke-width:0.557001"
        x="6.3772225"

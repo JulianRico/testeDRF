@@ -2,8 +2,7 @@ from rest_framework import serializers
 from .models import Report
 from users.models import User
 from companies.models import Companie, UserCompany
-from django.core.mail import EmailMessage, EmailMultiAlternatives
-from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 

@@ -1,11 +1,5 @@
-import os
-from django.shortcuts import render
-import io
 from django.http import FileResponse, HttpResponse
 from django.views import View
-from django.core.mail import EmailMessage, get_connection
-from svglib.svglib import svg2rlg
-from reportlab.graphics import renderPDF
 from .report_pdf_estacionario import GeneratePDFintoSVG
 from .models import Report
 from datetime import datetime
@@ -14,6 +8,8 @@ from companies.models import Companie, UserCompany
 import pdfkit
 import platform
 import tempfile
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
 
 
 class SVGtoPDFView(View):
@@ -74,10 +70,13 @@ class SVGtoPDFView(View):
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
 
         # Envía el PDF por correo electrónico
-        self.send_email_with_attachment(pdf_buffer, id_from_url, companie.name,
+        self.send_email_with_attachment(id_from_url, companie.name,
                                         companie.email, companieuser.emailContact, user.email, fecha_convertida)
 
-        return HttpResponse("Correo enviado con el PDF adjunto")
+        response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
+        response['Content-Disposition'] = f'attachment; filename="ReporteQ-Checker_{id_from_url}.pdf"'
+
+        return response
 
     def convert_svg_to_pdf(self, svg_code):
 
@@ -117,34 +116,46 @@ class SVGtoPDFView(View):
         except Exception as e:
             print("Error al generar el PDF:", str(e))
 
-        """ buffer = io.BytesIO()
-        drawing = svg2rlg(io.StringIO(svg_code))
-        renderPDF.drawToFile(drawing, buffer)
-        buffer.seek(0)
-        return buffer """
+    def send_email_with_attachment(self, id, namecompanie, correoempresa, correousuario, correousuarioempresa, fecha):
 
-    def send_email_with_attachment(self, pdf_buffer, id, namecompanie, correoempresa, correousuario, correousuarioempresa, fecha):
-        email = EmailMessage(
-            subject='Reporte Quality Checker',
-            body=f'Adjunto el reporte para la empresa {namecompanie} Generado el dia: {fecha}.',
-            from_email='julianrico@outlook.com',
-            to=[correoempresa, correousuario, correousuarioempresa],
+        # Reemplaza con la URL real
+        url_descargar = f'http://127.0.0.1:8000/api/pdfcreate/{id}'
 
-        )
+        subject = 'Entrega de Reporte Q-Checker S.A.S'
+        from_email = 'julianrico@outlook.com'
+        to = [correoempresa, correousuario, correousuarioempresa]
+        # Genera el contenido HTML directamente en el código
+        html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Reporte Q-Checker S.A.S</title>
+    </head>
+    <body>
+        <p>Estimado(a) {namecompanie},</p>        
+        <p>Por favor, descarga el Reporte {id} : {fecha}</p>
 
-        with open(pdf_buffer, 'rb') as pdf_file:
-            pdf_bytes = pdf_file.read()
+        <div style="margin-top: 20px;">            
+            <a href="{url_descargar}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Descargar</a>
+        </div>
 
-        nombrefichero = namecompanie + "_" + str(id) + ".pdf"
+        <p>Mensaje enviado por el sistema de reportes.</p>
+        <p>No contestar este mensaje,</p>
+        <p>Estamos comprometidos con el medio Ambiente, por favor no imprimir este documento si no es necesario, Politica de Cero Papel - Q-Checker S.A.S</p>        
+    </body>
+    </html>
+    """
+
+        # Elimina las etiquetas HTML para el contenido de texto
+        text_content = strip_tags(html_content)
+
         # Agrega el archivo PDF adjunto
-        email.attach(nombrefichero,
-                     pdf_bytes, 'application/pdf')
+        email = EmailMultiAlternatives(subject, text_content, from_email, to)
 
+        # Agrega el contenido HTML como alternativa
+        email.attach_alternative(html_content, "text/html")
         # Envía el correo electrónico
-        try:
-            email.send()
-        except Exception as e:
-            print(e)
+        email.send()
         # se borrar el archivo pdf
         # os.remove(pdf_buffer)
 # Create your views here.

@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 import io
 from django.http import FileResponse, HttpResponse
@@ -10,6 +11,9 @@ from .models import Report
 from datetime import datetime
 from users.models import User
 from companies.models import Companie, UserCompany
+import pdfkit
+import platform
+import tempfile
 
 
 class SVGtoPDFView(View):
@@ -40,10 +44,6 @@ class SVGtoPDFView(View):
         signatures = report.signatures
         photos = report.photos
 
-        print(report.userCompany)
-        print(report.companie)
-        print(report.user)
-
         try:
             # Consulta el modelo Report usando el ID
             user = User.objects.get(name=report.user)
@@ -63,12 +63,12 @@ class SVGtoPDFView(View):
             companieuser = UserCompany.objects.get(usuario=report.userCompany)
         except UserCompany.DoesNotExist:
             return HttpResponse("El usuario de compañia no existe.")
-        print(companieuser.emailContact)
+        print(companieuser)
 
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url
         )
 
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
@@ -80,11 +80,48 @@ class SVGtoPDFView(View):
         return HttpResponse("Correo enviado con el PDF adjunto")
 
     def convert_svg_to_pdf(self, svg_code):
-        buffer = io.BytesIO()
+
+        try:
+            # Configura las opciones de pdfkit
+            options = {
+                'page-size': 'Legal',
+                'margin-top': '2mm',
+                'margin-right': '2mm',
+                'margin-bottom': '0mm',
+                'margin-left': '0mm',
+                'encoding': "UTF-8",
+                'no-outline': None,
+                'dpi': 800,
+                'zoom': '1.4',
+            }
+            temp_pdf_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".pdf")
+            if platform.system() == 'Windows':
+
+                config = pdfkit.configuration(
+                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
+
+            # Genera el PDF desde el contenido SVG
+                pdfkit.from_string(svg_code, temp_pdf_path.name,
+                                   options=options, configuration=config)
+
+            else:
+                # Genera el PDF desde el contenido SVG
+                pdfkit.from_string(svg_code, temp_pdf_path.name,
+                                   options=options)
+
+            print("PDF generado exitosamente en:", temp_pdf_path.name)
+            temp_pdf_path.close()
+            return temp_pdf_path.name
+
+        except Exception as e:
+            print("Error al generar el PDF:", str(e))
+
+        """ buffer = io.BytesIO()
         drawing = svg2rlg(io.StringIO(svg_code))
         renderPDF.drawToFile(drawing, buffer)
         buffer.seek(0)
-        return buffer
+        return buffer """
 
     def send_email_with_attachment(self, pdf_buffer, id, namecompanie, correoempresa, correousuario, correousuarioempresa, fecha):
         email = EmailMessage(
@@ -94,11 +131,17 @@ class SVGtoPDFView(View):
             to=[correoempresa, correousuario, correousuarioempresa],
 
         )
+
+        with open(pdf_buffer, 'rb') as pdf_file:
+            pdf_bytes = pdf_file.read()
+
         nombrefichero = namecompanie + "_" + str(id) + ".pdf"
         # Agrega el archivo PDF adjunto
         email.attach(nombrefichero,
-                     pdf_buffer.read(), 'application/pdf')
+                     pdf_bytes, 'application/pdf')
 
         # Envía el correo electrónico
         email.send()
+        # se borrar el archivo pdf
+        os.remove(pdf_buffer)
 # Create your views here.

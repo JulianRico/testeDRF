@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 # exit on error
 set -o errexit
+
+#!/bin/bash
+
+# Actualiza los repositorios e instala las dependencias necesarias
+apt-get update && apt-get install -y \
+    wget \
+    xvfb \
+    libfontconfig \
+    libjpeg-turbo8 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    xfonts-75dpi \
+    xfonts-base
+
+# Descarga e instala wkhtmltopdf
+wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb && \
+    dpkg -i wkhtmltopdf.deb && \
+    apt-get install -f
+
+# Limpia el sistema
+apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb
+
 # Configuración de variables
 PYTHON_INTERPRETER=python
 DJANGO_MANAGE_PY=manage.py

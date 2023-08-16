@@ -143,5 +143,5 @@ class SVGtoPDFView(View):
         # Envía el correo electrónico
         email.send()
         # se borrar el archivo pdf
-        os.remove(pdf_buffer)
+        # os.remove(pdf_buffer)
 # Create your views here.

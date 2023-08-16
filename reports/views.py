@@ -70,8 +70,8 @@ class SVGtoPDFView(View):
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
 
         # Envía el PDF por correo electrónico
-        self.send_email_with_attachment(id_from_url, companie.name,
-                                        companie.email, companieuser.emailContact, user.email, fecha_convertida)
+        # self.send_email_with_attachment(id_from_url, companie.name,
+        #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
 
         response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
         response['Content-Disposition'] = f'attachment; filename="ReporteQ-Checker_{id_from_url}.pdf"'

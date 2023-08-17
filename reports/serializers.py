@@ -56,7 +56,6 @@ class ReportSerializer(serializers.ModelSerializer):
             **validated_data
         )
 
-        print(report)
         self.send_email(report.id)
         return report
 
@@ -64,11 +63,12 @@ class ReportSerializer(serializers.ModelSerializer):
         # Reemplaza con la URL real
         url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
         # Reemplaza con la URL real
-        url_aprobar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
+        url_aprobar = f'https://api-qc-drf.onrender.com/api/reportaprobe//{id}'
 
         subject = 'Informe para su revisión y aprobación'
         from_email = 'julianrico@outlook.com'
-        to = ['juliquinterorico@hotmail.com', 'dddinamico@gmail.com']
+        to = ['juliquinterorico@hotmail.com',
+              'dddinamico@gmail.com', "jhonfredyquinteroo@gmail.com"]
         # Genera el contenido HTML directamente en el código
         html_content = f"""
     <!DOCTYPE html>

@@ -2,8 +2,7 @@ from rest_framework import serializers
 from .models import Report
 from users.models import User
 from companies.models import Companie, UserCompany
-from django.core.mail import EmailMultiAlternatives
-from django.utils.html import strip_tags
+import yagmail
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -60,6 +59,8 @@ class ReportSerializer(serializers.ModelSerializer):
         return report
 
     def send_email(self, id):
+        user = "testqchecker@gmail.com"
+        codeApp = "rflahrjtjqzbdumr"
         # Reemplaza con la URL real
         url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
         # Reemplaza con la URL real
@@ -92,13 +93,5 @@ class ReportSerializer(serializers.ModelSerializer):
     </html>
     """
 
-        # Elimina las etiquetas HTML para el contenido de texto
-        text_content = strip_tags(html_content)
-
-        # Agrega el archivo PDF adjunto
-        email = EmailMultiAlternatives(subject, text_content, from_email, to)
-
-        # Agrega el contenido HTML como alternativa
-        email.attach_alternative(html_content, "text/html")
-        # Envía el correo electrónico
-        email.send()
+        with yagmail.SMTP(user, codeApp) as yag:
+            yag.send(to, subject, html_content)

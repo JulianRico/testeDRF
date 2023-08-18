@@ -12,6 +12,7 @@ import platform
 import tempfile
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
+import yagmail
 
 
 class SVGtoPDFView(View):
@@ -187,6 +188,8 @@ class SetSatus(View):
         # Reemplaza con la URL real
         url_descargar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
 
+        user = "testqchecker@gmail.com"
+        codeApp = "rflahrjtjqzbdumr"
         subject = 'Entrega de Reporte Q-Checker S.A.S'
         from_email = 'julianrico@outlook.com'
         to = [correoempresa, correousuario, correousuarioempresa]
@@ -213,13 +216,9 @@ class SetSatus(View):
     """
 
         # Elimina las etiquetas HTML para el contenido de texto
-        text_content = strip_tags(html_content)
+        # text_content = strip_tags(html_content)
 
-        # Agrega el archivo PDF adjunto
-        email = EmailMultiAlternatives(subject, text_content, from_email, to)
+        with yagmail.SMTP(user, codeApp) as yag:
+            yag.send(to, subject, html_content)
 
-        # Agrega el contenido HTML como alternativa
-        email.attach_alternative(html_content, "text/html")
-        # Envía el correo electrónico
-        email.send()
         # se borrar el archivo pdf

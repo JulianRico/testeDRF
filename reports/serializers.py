@@ -64,7 +64,7 @@ class ReportSerializer(serializers.ModelSerializer):
         # Reemplaza con la URL real
         url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
         # Reemplaza con la URL real
-        url_aprobar = f'https://api-qc-drf.onrender.com/api/reportaprobe//{id}'
+        url_aprobar = f'https://api-qc-drf.onrender.com/api/reportaprobe/{id}'
 
         subject = 'Informe para su revisión y aprobación'
         to = ['juliquinterorico@hotmail.com',

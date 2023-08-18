@@ -67,9 +67,8 @@ class ReportSerializer(serializers.ModelSerializer):
         url_aprobar = f'https://api-qc-drf.onrender.com/api/reportaprobe//{id}'
 
         subject = 'Informe para su revisión y aprobación'
-        from_email = 'julianrico@outlook.com'
         to = ['juliquinterorico@hotmail.com',
-              'dddinamico@gmail.com', "jhonfredyquinteroo@gmail.com"]
+              'dddinamico@gmail.com', "jhonfredyquintero@gmail.com"]
         # Genera el contenido HTML directamente en el código
         html_content = f"""
     <!DOCTYPE html>

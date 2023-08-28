@@ -20,7 +20,7 @@ class UserCompany(models.Model):
     contact = models.CharField(max_length=200)
     emailContact = models.EmailField()
     create_at = models.DateTimeField(auto_now_add=True)
-    companie = models.ForeignKey(Companie, related_name='Company',
+    companie = models.ForeignKey(Companie, related_name='users',
                                  on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self) -> str:

@@ -5,7 +5,7 @@ from .models import Companie, UserCompany
 class UserCompanySerializer(serializers.ModelSerializer):   
     class Meta:
         model = UserCompany
-        fields = ('id', 'usuario')
+        fields = ('id', 'usuario','companie')
         
 
 
@@ -23,5 +23,5 @@ class SetUserCompanySerializar(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
         fields = ('id', 'usuario', 'address', 'phone',
-                  'contact', 'emailContact', 'create_at')
+                  'contact', 'emailContact', 'create_at', 'companie')
         read_only_fields = ('create_at',)                 

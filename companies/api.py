@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 from .models import Companie, UserCompany
 from rest_framework import viewsets, permissions
-from .serializers import CompanieSerializer, UserCompanySerializer
+from .serializers import CompanieSerializer, UserCompanySerializer, SetUserCompanySerializar
 from .permissions import IsAuthenticatedByJWT
 
 
@@ -22,7 +22,7 @@ class UserCompanieViewSet(viewsets.ModelViewSet):
 
 
 class UserCompanyCreateView(CreateAPIView):
-    serializer_class = UserCompanySerializer
+    serializer_class = SetUserCompanySerializar
 
     def create(self, request, *args, **kwargs):
         # Obtener el ID de la compañía de la URL

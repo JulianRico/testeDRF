@@ -3,6 +3,8 @@ import os
 from django.http import FileResponse, HttpResponse
 from django.views import View
 from .report_pdf_estacionario import GeneratePDFintoSVG
+from .imagenes_pdf import GenerateImagesPDFintoSVG
+from .certificado_pdf import GenerateCertificatePDFintoSVG
 from .models import Report
 from datetime import datetime
 from users.models import User
@@ -13,6 +15,7 @@ import tempfile
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 import yagmail
+from PyPDF2 import PdfMerger
 
 
 class SVGtoPDFView(View):
@@ -134,10 +137,7 @@ class SVGtoPDFView(View):
         except Exception as e:
             print("Error al generar el PDF:", str(e))
 
-
 # Create your views here.
-
-
 class SetSatus(View):
     def get(self, request, *args, **kwargs):
         try:
@@ -222,3 +222,163 @@ class SetSatus(View):
             yag.send(to, subject, html_content)
 
         # se borrar el archivo pdf
+
+
+class SVGtoPdfImagesView(View):
+    def get(self, request, *args, **kwargs):
+        id_from_url = kwargs.get('id_report')
+
+        print(id_from_url)
+
+        try:
+            # Consulta el modelo Report usando el ID
+            report = Report.objects.get(id=id_from_url)
+        except Report.DoesNotExist:
+            return HttpResponse("El reporte no existe.")
+
+        # Aquí puedes acceder a los campos del reporte
+        # Convierte la cadena de fecha a un objeto datetime
+        fecha = report.create_at
+        fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+        fechafull = fecha_str.split(" ")
+        fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
+        fecha_convertida = fecha_objeto.strftime("%d-%m-%Y")
+
+        questions_mtto = report.questionsmtto
+        question_views = report.questionviews
+        questions_deterioration = report.questionsdeterioration
+        tank_identification = report.tankidentification
+        observations_and_results = report.observationsandresults
+        signatures = report.signatures
+        photos = report.photos
+
+        try:
+            # Consulta el modelo Report usando el ID
+            user = User.objects.get(name=report.user)
+        except User.DoesNotExist:
+            return HttpResponse("El usuario no existe.")
+        print(user.email)
+
+        try:
+            # Consulta el modelo Report usando el ID
+            companie = Companie.objects.get(name=report.companie)
+        except Companie.DoesNotExist:
+            return HttpResponse("la compañia no existe.")
+        print(companie.email)
+
+        try:
+            # Consulta el modelo Report usando el ID
+            companieuser = UserCompany.objects.get(usuario=report.userCompany)
+        except UserCompany.DoesNotExist:
+            return HttpResponse("El usuario de compañia no existe.")
+        print(companieuser)
+
+        # Pasa los campos a la función GeneratePDFintoSVG
+        svg_code = GeneratePDFintoSVG(
+            questions_mtto, question_views, questions_deterioration, tank_identification,
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url
+        )
+
+        svg_code2 =  GenerateImagesPDFintoSVG(
+            photos, fecha_convertida, companieuser, companie, user, id_from_url
+        )
+        try:
+            pdf_buffer = self.convert_svg_to_pdf(svg_code, svg_code2)
+            print('tengo el pdf')
+        except Exception as e:
+            print(e)
+        # Envía el PDF por correo electrónico
+        # self.send_email_with_attachment(id_from_url, companie.name,
+        #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
+        response = HttpResponse(
+            pdf_buffer["buffer"], content_type='application/pdf')
+        # response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
+        response['Content-Disposition'] = f'attachment; filename="ReporteQ-Checker_{id_from_url}.pdf"'
+
+        os.remove(pdf_buffer["path"])
+        return response
+
+    def convert_svg_to_pdf(self, svg_code, svg_code2):
+
+        try:
+            svg_height = "14in"
+            # Configura las opciones de pdfkit
+            options = {
+                'page-size': 'A4',
+                'margin-top': '7mm',
+                'margin-right': '20mm',
+                'margin-bottom': '0mm',
+                'margin-left': '20mm',
+                'encoding': "UTF-8",
+                'no-outline': None,
+                'dpi': 999,
+                'zoom': '1',
+                'viewport-size': f'x{svg_height}',
+                'image-dpi': 900
+            }
+
+            temp_svg_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".svg")
+            temp_svg_path.write(svg_code.encode())
+            temp_svg_path.close()            
+            
+
+            temp_svg_path2 = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".svg")
+            temp_svg_path2.write(svg_code2.encode())
+            temp_svg_path2.close()            
+            
+
+            if platform.system() == 'Windows':
+                config = pdfkit.configuration(
+                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
+            # Genera el PDF desde el contenido SVG
+                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
+                                 options=options, configuration=config)
+                pdfkit.from_file(temp_svg_path2.name, temp_svg_path2.name + '.pdf',
+                                 options=options, configuration=config)    
+            else:
+                # Genera el PDF desde el contenido SVG
+                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
+                                 options=options)
+                pdfkit.from_file(temp_svg_path2.name, temp_svg_path2.name + '.pdf',
+                                 options=options)          
+
+            # Combine the two PDFs into one
+            combined_pdf_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".pdf").name
+
+            
+            # Use PyPDF2 to combine PDFs
+            try:
+                pdf_merger = PdfMerger()
+                pdf_merger.append(temp_svg_path.name + '.pdf')
+                pdf_merger.append(temp_svg_path2.name + '.pdf')
+
+                with open(combined_pdf_path, 'wb') as combined_pdf_file:
+                    pdf_merger.write(combined_pdf_file)
+
+                pdf_merger.close()
+                
+            except Exception as e:
+                print(e)        
+           
+           
+           
+            
+            
+            # Remove temporary files
+            os.remove(temp_svg_path.name)
+            os.remove(temp_svg_path.name + '.pdf')
+            os.remove(temp_svg_path2.name)
+            os.remove(temp_svg_path2.name + '.pdf')
+
+            with open(combined_pdf_path, 'rb') as pdf_file:
+                pdf_buffer = pdf_file.read()           
+
+            print("PDF generado exitosamente en:", combined_pdf_path)
+
+            return {'buffer': pdf_buffer, 'path': combined_pdf_path}
+
+        except Exception as e:
+            print("Error al generar el PDF:", str(e))

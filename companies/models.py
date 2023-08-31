@@ -16,7 +16,7 @@ class Companie(models.Model):
 class UserCompany(models.Model):
     usuario = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
-    phone = models.CharField(max_length=200)
+    phone = models.CharField(max_length=200)   
     contact = models.CharField(max_length=200)
     emailContact = models.EmailField()
     create_at = models.DateTimeField(auto_now_add=True)

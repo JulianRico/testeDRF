@@ -186,12 +186,11 @@ class SetSatus(View):
     def send_email_with_attachment(self, id, fecha, correoempresa, correousuario, correousuarioempresa, namecompanie):
 
         # Reemplaza con la URL real
-        url_descargar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
+        url_descargar = f'https://api-qc-drf.onrender.com/api/pdfcreatecertificate/{id}'
 
         user = "testqchecker@gmail.com"
         codeApp = "rflahrjtjqzbdumr"
-        subject = 'Entrega de Reporte Q-Checker S.A.S'
-        from_email = 'julianrico@outlook.com'
+        subject = 'Entrega de Reporte Q-Checker S.A.S'        
         to = [correoempresa, correousuario, correousuarioempresa]
         # Genera el contenido HTML directamente en el código
         html_content = f"""
@@ -382,3 +381,123 @@ class SVGtoPdfImagesView(View):
 
         except Exception as e:
             print("Error al generar el PDF:", str(e))
+
+
+class CertificatePDFView(View):
+    def get(self, request, *args, **kwargs):
+        id_from_url = kwargs.get('id_report')
+
+        print(id_from_url)
+
+        try:
+            # Consulta el modelo Report usando el ID
+            report = Report.objects.get(id=id_from_url)
+        except Report.DoesNotExist:
+            return HttpResponse("El reporte no existe.")
+
+        # Aquí puedes acceder a los campos del reporte
+        # Convierte la cadena de fecha a un objeto datetime
+        fecha = report.create_at
+        fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+        fechafull = fecha_str.split(" ")
+        fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
+        fecha_convertida = fecha_objeto.strftime("%d-%m-%Y")
+
+        questions_mtto = report.questionsmtto
+        question_views = report.questionviews
+        questions_deterioration = report.questionsdeterioration
+        tank_identification = report.tankidentification
+        observations_and_results = report.observationsandresults
+        signatures = report.signatures
+        photos = report.photos
+
+        try:
+            # Consulta el modelo Report usando el ID
+            user = User.objects.get(name=report.user)
+        except User.DoesNotExist:
+            return HttpResponse("El usuario no existe.")
+        
+
+        try:
+            # Consulta el modelo Report usando el ID
+            companie = Companie.objects.get(name=report.companie)
+        except Companie.DoesNotExist:
+            return HttpResponse("la compañia no existe.")        
+
+        try:
+            # Consulta el modelo Report usando el ID
+            companieuser = UserCompany.objects.get(usuario=report.userCompany)
+        except UserCompany.DoesNotExist:
+            return HttpResponse("El usuario de compañia no existe.")        
+
+        # Pasa los campos a la función GeneratePDFintoSVG
+        svg_code = GenerateCertificatePDFintoSVG(
+            questions_mtto, question_views, questions_deterioration, tank_identification,
+            observations_and_results, fecha_convertida, companieuser, companie, user, id_from_url
+        )
+
+        pdf_buffer = self.convert_svg_to_pdf(svg_code)
+
+        # Envía el PDF por correo electrónico
+        # self.send_email_with_attachment(id_from_url, companie.name,
+        #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
+        response = HttpResponse(
+            pdf_buffer["bufer"], content_type='application/pdf')
+        
+        # response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
+        response['Content-Disposition'] = f'attachment; filename="Certificado_Quality_Checker_{fecha_convertida}_{id_from_url}.pdf"'
+
+        os.remove(pdf_buffer["path"])
+        return response
+
+    def convert_svg_to_pdf(self, svg_code):
+
+        try:
+            svg_height = "14in"
+            # Configura las opciones de pdfkit
+            options = {
+                'page-size': 'Letter',
+                'margin-top': '7mm',
+                'margin-right': '20mm',
+                'margin-bottom': '0mm',
+                'margin-left': '20mm',
+                'encoding': "UTF-8",
+                'no-outline': None,
+                'dpi': 999,
+                'zoom': '1',
+                'viewport-size': f'x{svg_height}',
+                'image-dpi': 900
+            }
+
+            temp_svg_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".svg")
+            temp_svg_path.write(svg_code.encode())
+            temp_svg_path.close()
+
+            temp_pdf_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".pdf")
+            if platform.system() == 'Windows':
+
+                config = pdfkit.configuration(
+                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
+
+            # Genera el PDF desde el contenido SVG
+                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
+                                 options=options, configuration=config)
+
+            else:
+                # Genera el PDF desde el contenido SVG
+                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
+                                 options=options)
+            with open(temp_svg_path.name + '.pdf', 'rb') as pdf_file:
+                pdf_buffer = io.BytesIO(pdf_file.read())
+                # Eliminar los archivos temporales
+            os.remove(temp_svg_path.name)
+            os.remove(temp_svg_path.name + '.pdf')
+            print("PDF generado exitosamente en:", temp_pdf_path.name)
+
+            return {'bufer': pdf_buffer, 'path': temp_pdf_path.name}
+
+        except Exception as e:
+            print("Error al generar el PDF:", str(e))
+

@@ -62,9 +62,11 @@ class ReportSerializer(serializers.ModelSerializer):
         user = "testqchecker@gmail.com"
         codeApp = "rflahrjtjqzbdumr"
         # Reemplaza con la URL real
-        url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreate/{id}'
+        url_revisar = f'https://api-qc-drf.onrender.com/api/pdfcreateimages/{id}'
         # Reemplaza con la URL real
         url_aprobar = f'https://api-qc-drf.onrender.com/api/reportaprobe/{id}'
+
+        url_certificate = f'https://api-qc-drf.onrender.com/api/pdfcreatecertificate/{id}'
 
         subject = 'Informe para su revisión y aprobación'
         to = ['juliquinterorico@hotmail.com',
@@ -84,6 +86,7 @@ class ReportSerializer(serializers.ModelSerializer):
         <div style="margin-top: 20px;">
             <a href="{url_revisar}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">Revisar</a>
             <a href="{url_aprobar}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Aprobar</a>
+            <a href="{url_certificate}" style="background-color: #000CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">ver Certificado</a>
         </div>
 
         <p>Mensaje enviado por el sistema de reportes.</p>

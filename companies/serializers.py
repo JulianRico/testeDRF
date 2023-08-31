@@ -22,6 +22,6 @@ class CompanieSerializer(serializers.ModelSerializer):
 class SetUserCompanySerializar(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
-        fields = ('id', 'usuario', 'address', 'phone',
+        fields = ('id', 'usuario', 'address', 'phone', 'city',
                   'contact', 'emailContact', 'create_at', 'companie')
         read_only_fields = ('create_at',)                 

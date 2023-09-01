@@ -456,16 +456,15 @@ class CertificatePDFView(View):
             svg_height = "14in"
             # Configura las opciones de pdfkit
             options = {
-                'page-size': 'Letter',
-                'margin-top': '7mm',
-                'margin-right': '20mm',
+                'page-size': 'A4',
+                'margin-top': '0mm',
+                'margin-right': '10mm',
                 'margin-bottom': '0mm',
-                'margin-left': '20mm',
+                'margin-left': '10mm',
                 'encoding': "UTF-8",
                 'no-outline': None,
-                'dpi': 999,
-                'zoom': '1',
-                'viewport-size': f'x{svg_height}',
+                'dpi': 999,               
+                
                 'image-dpi': 900
             }
 

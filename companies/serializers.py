@@ -15,13 +15,13 @@ class CompanieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Companie
-        fields = ('id', 'name', 'email', 'nit',
+        fields = ('id', 'name', 'email', 'nit','city','address'
                   'create_at','users')
 
 
 class SetUserCompanySerializar(serializers.ModelSerializer):
     class Meta:
         model = UserCompany
-        fields = ('id', 'usuario', 'address', 'phone', 'city',
+        fields = ('id', 'usuario', 'address', 'phone',
                   'contact', 'emailContact', 'create_at', 'companie')
         read_only_fields = ('create_at',)                 

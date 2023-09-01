@@ -6,6 +6,8 @@ from django.db import models
 class Companie(models.Model):
     name = models.CharField(max_length=500)
     nit = models.CharField(max_length=30)
+    city = models.CharField(max_length=50, default='Bogota')
+    address = models.CharField(max_length=200, default='Bogota D.C')
     email = models.EmailField()
     create_at = models.DateTimeField(auto_now_add=True)
 
@@ -16,7 +18,7 @@ class Companie(models.Model):
 class UserCompany(models.Model):
     usuario = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
-    phone = models.CharField(max_length=200)   
+    phone = models.CharField(max_length=20)   
     contact = models.CharField(max_length=200)
     emailContact = models.EmailField()
     create_at = models.DateTimeField(auto_now_add=True)

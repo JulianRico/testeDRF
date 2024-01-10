@@ -55,10 +55,10 @@ class ReportSerializer(serializers.ModelSerializer):
             **validated_data
         )
 
-        self.send_email(report.id)
+        self.send_email(report.id, user.email)
         return report
 
-    def send_email(self, id):
+    def send_email(self, id, userEmail):
         user = "testqchecker@gmail.com"
         codeApp = "rflahrjtjqzbdumr"
         # Reemplaza con la URL real
@@ -70,7 +70,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
         subject = 'Informe para su revisión y aprobación'
         to = ['juliquinterorico@hotmail.com',
-              'dddinamico@gmail.com', "jhonfredyquintero@gmail.com"]
+              'dddinamico@gmail.com', "jhonfredyquintero@gmail.com", userEmail]
         # Genera el contenido HTML directamente en el código
         html_content = f"""
     <!DOCTYPE html>

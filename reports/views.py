@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 import yagmail
 from PyPDF2 import PdfMerger
-
+from .cumple import Cumple
 
 class SVGtoPDFView(View):
     def get(self, request, *args, **kwargs):
@@ -67,10 +67,22 @@ class SVGtoPDFView(View):
             return HttpResponse("El usuario de compañia no existe.")
         print(companieuser)
 
+
+        # revisa si cumple en todo
+        cumple_instance_identification = Cumple(tank_identification)
+        print(cumple_instance_identification)
+        cumple_instance_identification.buscar_cumple_principal() 
+        
+        cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)
+        
+        compleidentification = cumple_instance_identification.BuscarFalse()
+
+        print(compleidentification)
+
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,compleidentification
         )
 
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
@@ -272,10 +284,24 @@ class SVGtoPdfImagesView(View):
             return HttpResponse("El usuario de compañia no existe.")
         print(companieuser)
 
+        # revisa si cumple en todo
+       
+
+       
+
+        # revisa si cumple en todo
+        cumple_instance_identification = Cumple(tank_identification)
+        cumple_instance_identification.buscar_cumple_principal()        
+        cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)
+        compleidentification = cumple_instance_identification.BuscarFalse()
+        print(compleidentification)
+
+        
+
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url, compleidentification
         )
 
         svg_code2 =  GenerateImagesPDFintoSVG(

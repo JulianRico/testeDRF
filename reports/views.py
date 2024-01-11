@@ -424,12 +424,11 @@ class SVGtoPdfImagesView(View):
         print(CumpleCertificado);
 
         
-
+        print(companieuser)
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado
-        )
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
 
         svg_code2 =  GenerateImagesPDFintoSVG(
             photos, fecha_convertida, companieuser, companie, user, id_from_url

@@ -18418,17 +18418,7 @@ def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_dete
      id="image11746"
      x="231.98961"
      y="7.8899055" />
-
-   <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;fill:#49bf00;fill-opacity:1;stroke:none;stroke-width:0.423357"
-       x="0.93546"
-       y="1030.04871"
-       id="text13351"><tspan
-         id="tspan13349"
-         x="0.93546"
-         y="1030.04871"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#b3b3b3;fill-opacity:1;stroke-width:0.423357">{ 'Aprobado' if aprobado == True else "Rechazado" }</tspan></text> 
+   
 </svg>
 
   

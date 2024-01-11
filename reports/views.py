@@ -218,11 +218,101 @@ class SetSatus(View):
     def send_email_with_attachment(self, id, fecha, correoempresa, correousuario, correousuarioempresa, namecompanie):
 
         # Reemplaza con la URL real
-        url_descargar = f'https://api-qc-drf.onrender.com/api/pdfcreatecertificate/{id}'
+        
+        url_descargarCertificado = f'https://api-qc-drf.onrender.com/api/pdfcreatecertificate/{id}'
+
+        url_descargarReporte = f'https://api-qc-drf.onrender.com/api/pdfcreateimages/{id}'
 
         user = "testqchecker@gmail.com"
         codeApp = "rflahrjtjqzbdumr"
-        subject = 'Entrega de Reporte Q-Checker S.A.S'        
+        subject = 'Entrega de Reporte Q-Checker S.A.S [Aprobado]'        
+        to = [correoempresa, correousuario, correousuarioempresa]
+        # Genera el contenido HTML directamente en el código
+        html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Reporte Q-Checker S.A.S</title>
+    </head>
+    <body>
+        <p>Estimado(a) {namecompanie},</p>        
+        <p>Por favor, descarga el Reporte y certificado {id} : {fecha}</p>
+
+        <div style="margin-top: 20px;">            
+            <a href="{url_descargarCertificado}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Descargar Certificado</a> <br/>
+             <a href="{url_descargarReporte}" style="background-color: #9404db; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Descargar Reporte</a>
+        </div>
+
+        <p>Mensaje enviado por el sistema de reportes.</p>
+        <p>No contestar este mensaje,</p>
+        <p>Estamos comprometidos con el medio Ambiente, por favor no imprimir este documento si no es necesario, Politica de Cero Papel - Q-Checker S.A.S</p>        
+    </body>
+    </html>
+    """
+
+        # Elimina las etiquetas HTML para el contenido de texto
+        # text_content = strip_tags(html_content)
+
+        with yagmail.SMTP(user, codeApp) as yag:
+            yag.send(to, subject, html_content)
+
+        # se borrar el archivo pdf
+
+class SetStatusReject(View):
+    def get(self, request, *args, **kwargs):
+        try:   
+           
+            report_id = kwargs.get('id_report')
+            print(report_id)
+            new_status = 2
+            report = Report.objects.get(pk=report_id)
+           
+            report.status = new_status
+            report.save()
+
+            fecha = report.create_at
+            fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+            fechafull = fecha_str.split(" ")
+            fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
+            fecha_convertida = fecha_objeto.strftime("%d-%m-%Y")
+
+            try:
+                # Consulta el modelo Report usando el ID
+                user = User.objects.get(name=report.user)
+            except User.DoesNotExist:
+                return HttpResponse("El usuario no existe.")
+            print(user.email)
+
+            try:
+                # Consulta el modelo Report usando el ID
+                companie = Companie.objects.get(name=report.companie)
+            except Companie.DoesNotExist:
+                return HttpResponse("la compañia no existe.")
+            print(companie.email)
+
+            try:
+                # Consulta el modelo Report usando el ID
+                companieuser = UserCompany.objects.get(
+                    usuario=report.userCompany)
+            except UserCompany.DoesNotExist:
+                return HttpResponse("El usuario de compañia no existe.")
+            print(companieuser)
+
+            self.send_email_with_attachment(
+                report_id, fecha_convertida, companie.email, user.email, companieuser.emailContact, companie.name)
+            return HttpResponse(f"Reporte rechazado {report_id}.")
+        except Report.DoesNotExist:
+            return HttpResponse(f"El reporte {report_id} no Existe.")
+
+    def send_email_with_attachment(self, id, fecha, correoempresa, correousuario, correousuarioempresa, namecompanie):
+
+        # Reemplaza con la URL real       
+
+        url_descargarReporte = f'https://api-qc-drf.onrender.com/api/pdfcreateimages/{id}'
+
+        user = "testqchecker@gmail.com"
+        codeApp = "rflahrjtjqzbdumr"
+        subject = 'Entrega de Reporte Q-Checker S.A.S [Rechazado]'        
         to = [correoempresa, correousuario, correousuarioempresa]
         # Genera el contenido HTML directamente en el código
         html_content = f"""
@@ -236,7 +326,7 @@ class SetSatus(View):
         <p>Por favor, descarga el Reporte {id} : {fecha}</p>
 
         <div style="margin-top: 20px;">            
-            <a href="{url_descargar}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Descargar</a>
+            <a href="{ url_descargarReporte}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; margin-left: 10px;">Descargar</a>
         </div>
 
         <p>Mensaje enviado por el sistema de reportes.</p>

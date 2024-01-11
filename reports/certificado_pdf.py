@@ -11,10 +11,10 @@ from qrcode.image import svg
 
 
 def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_deterioration, tank_identification,
-                       observations_and_results,  fecha_convertida, companieuser, companie, user, id):
+                       observations_and_results,  fecha_convertida, companieuser, companie, user, id, aprobado):
    # Crear un objeto BytesIO para guardar la imagen en memoria
-   
-
+   print("aprobado")
+   print(aprobado)
    qr = qrcode.QRCode(
       version=1,  # Tamaño del código QR (1-40)
       error_correction=qrcode.constants.ERROR_CORRECT_L,  # Nivel de corrección de errores (L, M, Q, H)
@@ -33,7 +33,7 @@ def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_dete
    codigo_qr_svg = buffer.getvalue()
    #guarda la imagen
    imagen_base64 = base64.b64encode(codigo_qr_svg).decode("utf-8")
-   print(imagen_base64)
+   
    
    JSONquestions_mtto = json.loads(questions_mtto)
    JSONquestion_views = json.loads(question_views)
@@ -12184,26 +12184,12 @@ def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_dete
       <g
          clip-path="url(#gs)"
          id="g5099">
-        <text
-           xml:space="preserve"
-           transform="matrix(1,0,0,-1,85.104,433.87)"
-           style="font-variant:normal;font-weight:400;font-size:11.04px;font-family:Arial;-inkscape-font-specification:ArialMT;writing-mode:lr-tb;fill:#404040;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           id="text5097"><tspan
-             x="0"
-             y="0"
-             id="tspan5095">U</tspan></text>
+        
       </g>
       <g
          clip-path="url(#gt)"
          id="g5105">
-        <text
-           xml:space="preserve"
-           transform="matrix(1,0,0,-1,93.024,433.87)"
-           style="font-variant:normal;font-weight:400;font-size:11.04px;font-family:Arial;-inkscape-font-specification:ArialMT;writing-mode:lr-tb;fill:#404040;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           id="text5103"><tspan
-             x="0 6.1382399 8.5228796 14.04288 20.18112 25.70112 28.08576 34.223999"
-             y="0"
-             id="tspan5101">bicación</tspan></text>
+        
       </g>
       <g
          clip-path="url(#gu)"
@@ -12256,14 +12242,7 @@ def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_dete
       <g
          clip-path="url(#gK)"
          id="g5143">
-        <text
-           xml:space="preserve"
-           transform="matrix(1,0,0,-1,182.42,433.87)"
-           style="font-variant:normal;font-weight:400;font-size:11.04px;font-family:Arial;-inkscape-font-specification:ArialMT;writing-mode:lr-tb;fill:#404040;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           id="text5141"><tspan
-             x="0"
-             y="0"
-             id="tspan5139">{str.upper(JSONtank_identification['ubicacion'] or '')}</tspan></text>
+        
       </g>
     </g>
     <g
@@ -18439,6 +18418,17 @@ def GenerateCertificatePDFintoSVG(questions_mtto, question_views, questions_dete
      id="image11746"
      x="231.98961"
      y="7.8899055" />
+
+   <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;fill:#49bf00;fill-opacity:1;stroke:none;stroke-width:0.423357"
+       x="0.93546"
+       y="1030.04871"
+       id="text13351"><tspan
+         id="tspan13349"
+         x="0.93546"
+         y="1030.04871"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#b3b3b3;fill-opacity:1;stroke-width:0.423357">{ 'Aprobado' if aprobado == True else "Rechazado" }</tspan></text> 
 </svg>
 
   

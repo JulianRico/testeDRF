@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 import yagmail
 from PyPDF2 import PdfMerger
-from .cumple import Cumple
+from .cumple import Cumple, CumpleDeterioration
 
 class SVGtoPDFView(View):
     def get(self, request, *args, **kwargs):
@@ -70,19 +70,39 @@ class SVGtoPDFView(View):
 
         # revisa si cumple en todo
         cumple_instance_identification = Cumple(tank_identification)
-        print(cumple_instance_identification)
-        cumple_instance_identification.buscar_cumple_principal() 
         
-        cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)
-        
-        compleidentification = cumple_instance_identification.BuscarFalse()
+        cumple_instance_identification.buscar_cumple_principal()        
+        cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)        
+        cumpleidentification = cumple_instance_identification.BuscarFalse()
 
-        print(compleidentification)
+        
+
+        cumple_objDeterioration = CumpleDeterioration()
+        resultadoDetarioration = cumple_objDeterioration.buscar_cumple_principal(questions_deterioration)
+        
+
+
+        cumple_objViews = CumpleDeterioration()
+        resultadoViews = cumple_objViews.buscar_cumple_principal(question_views)
+        
+    
+        cumple_objObservations = CumpleDeterioration()
+        resultadoObservations = cumple_objObservations.buscar_cumple_principal(observations_and_results)
+        
+
+        CumpleCertificado: bool; 
+        if resultadoObservations and resultadoViews and resultadoDetarioration and cumpleidentification:
+            print("todos cumple")
+            CumpleCertificado = True;
+        else:
+            print("no cumple")  
+            CumpleCertificado = False;
+        print(CumpleCertificado);
 
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,compleidentification
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado
         )
 
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
@@ -293,15 +313,32 @@ class SVGtoPdfImagesView(View):
         cumple_instance_identification = Cumple(tank_identification)
         cumple_instance_identification.buscar_cumple_principal()        
         cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)
-        compleidentification = cumple_instance_identification.BuscarFalse()
-        print(compleidentification)
+        cumpleidentification = cumple_instance_identification.BuscarFalse()
+
+        cumple_objDeterioration = CumpleDeterioration()
+        resultadoDetarioration = cumple_objDeterioration.buscar_cumple_principal(questions_deterioration) 
+
+        cumple_objViews = CumpleDeterioration()
+        resultadoViews = cumple_objViews.buscar_cumple_principal(question_views)
+
+        cumple_objObservations = CumpleDeterioration()
+        resultadoObservations = cumple_objObservations.buscar_cumple_principal(observations_and_results)        
+
+        CumpleCertificado: bool; 
+        if resultadoObservations and resultadoViews and resultadoDetarioration and cumpleidentification:
+            print("todos cumple")
+            CumpleCertificado = True;
+        else:
+            print("no cumple")  
+            CumpleCertificado = False;
+        print(CumpleCertificado);
 
         
 
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GeneratePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url, compleidentification
+            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado
         )
 
         svg_code2 =  GenerateImagesPDFintoSVG(
@@ -413,7 +450,7 @@ class CertificatePDFView(View):
     def get(self, request, *args, **kwargs):
         id_from_url = kwargs.get('id_report')
 
-        print(id_from_url)
+       
 
         try:
             # Consulta el modelo Report usando el ID
@@ -453,14 +490,48 @@ class CertificatePDFView(View):
         try:
             # Consulta el modelo Report usando el ID
             companieuser = UserCompany.objects.get(usuario=report.userCompany)
+            
         except UserCompany.DoesNotExist:
-            return HttpResponse("El usuario de compañia no existe.")        
+            return HttpResponse("El usuario de compañia no existe.")   
 
+        #agrgar la validaciones
+        # revisa si cumple en todo
+        cumple_instance_identification = Cumple(tank_identification)
+        cumple_instance_identification.buscar_cumple_principal()        
+        cumple_instance_identification.buscar_cumple(cumple_instance_identification.datos)
+        cumpleidentification = cumple_instance_identification.BuscarFalse()
+        print("cumple identificacion")
+        print(cumpleidentification)
+
+        
+        cumple_objDeterioration = CumpleDeterioration()
+        resultadoDetarioration = cumple_objDeterioration.buscar_cumple_principal(questions_deterioration)
+        print("cumple deterioration")
+        print(resultadoDetarioration)
+
+
+        cumple_objViews = CumpleDeterioration()
+        resultadoViews = cumple_objViews.buscar_cumple_principal(question_views)
+        print("cumple views")
+        print(resultadoViews)
+    
+        cumple_objObservations = CumpleDeterioration()
+        resultadoObservations = cumple_objObservations.buscar_cumple_principal(observations_and_results)
+        print("cumple Observationsandresults")
+        print(resultadoObservations)
+
+        CumpleCertificado: bool; 
+        if resultadoObservations and resultadoViews and resultadoDetarioration and cumpleidentification:
+            print("todos cumple")
+            CumpleCertificado = True;
+        else:
+            print("no cumple")  
+            CumpleCertificado = False;
+        print(CumpleCertificado);    
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GenerateCertificatePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, fecha_convertida, companieuser, companie, user, id_from_url
-        )
+            observations_and_results, fecha_convertida, companieuser, companie, user, id_from_url, CumpleCertificado)
 
         pdf_buffer = self.convert_svg_to_pdf(svg_code)
 

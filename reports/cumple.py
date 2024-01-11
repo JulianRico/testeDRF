@@ -3,7 +3,7 @@ import json  # Import the 'json' module to use JSON-related functions
 class Cumple:
     
     def __init__(self, data):
-        self.datos = json.loads(data)
+        self.datos = json.loads(data)        
         self.AllValues = []
 
     def buscar_cumple(self, diccionario, clave_padre=""):        
@@ -32,4 +32,19 @@ class Cumple:
             if clave == "cumple" and valor == False:
                 self.AllValues.append(False)            
         
-                 
+class CumpleDeterioration:
+    def __init__(self):
+        self.AllValues = []
+
+    def buscar_cumple(self, diccionario, clave_padre=""):
+        for clave, subdiccionario in diccionario.items():
+            if isinstance(subdiccionario, dict):
+                if "cumple" in subdiccionario:
+                    self.AllValues.append(subdiccionario["cumple"])
+                self.buscar_cumple(subdiccionario, f"{clave_padre}.{clave}")
+
+    def buscar_cumple_principal(self, data):
+        self.AllValues = []  # Reinicializar la lista antes de cada búsqueda
+        datos = json.loads(data)
+        self.buscar_cumple(datos)
+        return all(self.AllValues)                 

@@ -1,11 +1,10 @@
 import json
 import requests
 import base64
-from io import BytesIO
-from reportlab.platypus import Image
 
 
-def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, tank_identification,
+
+def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deterioration, tank_identification,
                        observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id, aprobado):
     """ print(questions_mtto)
     print(question_views)

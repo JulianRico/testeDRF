@@ -16,7 +16,7 @@ class Report(models.Model):
 
     SelfStatus = ((1, "Espera"), (2, "Rechazado"), (3, "Aprobado"))
     status = models.IntegerField(choices=SelfStatus, default=1)
-    create_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, related_name='reports',
                              on_delete=models.CASCADE, blank=True, null=True)
     companie = models.ForeignKey(

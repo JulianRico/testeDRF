@@ -1,0 +1,6 @@
+{% for report in reports %}
+    <div>
+        <!-- Otros campos del informe -->
+        <p>Fecha de creación: {{ report.created_at|date:"Y-m-d H:i:s" }}</p>
+    </div>
+{% endfor %}

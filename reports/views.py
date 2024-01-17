@@ -2,6 +2,8 @@ import io
 import os
 from django.http import FileResponse, HttpResponse
 from django.views import View
+
+from reports.serializers import ReportSerializer
 from .report_pdf_estacionario import GeneratePDFintoSVG
 from .imagenes_pdf import GenerateImagesPDFintoSVG
 from .certificado_pdf import GenerateCertificatePDFintoSVG
@@ -17,6 +19,7 @@ from django.core.mail import EmailMultiAlternatives
 import yagmail
 from PyPDF2 import PdfMerger
 from .cumple import Cumple, CumpleDeterioration
+
 
 class SVGtoPDFView(View):
     def get(self, request, *args, **kwargs):

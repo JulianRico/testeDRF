@@ -20,7 +20,8 @@ apt-get update && apt-get install -y \
 wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb && \
     dpkg -i wkhtmltopdf.deb && \
     apt-get install -f
-
+    
+apt-get install libreoffice
 # Limpia el sistema
 apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb
 

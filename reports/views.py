@@ -1,8 +1,10 @@
 import io
+import json
 import os
 from django.http import FileResponse, HttpResponse
 from django.views import View
-
+from reports.report_pdf_movil import GeneratePDFintoSVGMovil
+from reports.imagenes_pdf_movil import GenerateImagesPDFintoSVGMovil
 from reports.serializers import ReportSerializer
 from .report_pdf_estacionario import GeneratePDFintoSVG
 from .imagenes_pdf import GenerateImagesPDFintoSVG
@@ -35,7 +37,7 @@ class SVGtoPDFView(View):
 
         # Aquí puedes acceder a los campos del reporte
         # Convierte la cadena de fecha a un objeto datetime
-        fecha = report.create_at
+        fecha = report.created_at
         fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
         fechafull = fecha_str.split(" ")
         fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
@@ -184,7 +186,7 @@ class SetSatus(View):
             report.status = new_status
             report.save()
 
-            fecha = report.create_at
+            fecha = report.created_at
             fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
             fechafull = fecha_str.split(" ")
             fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
@@ -273,7 +275,7 @@ class SetStatusReject(View):
             report.status = new_status
             report.save()
 
-            fecha = report.create_at
+            fecha = report.created_at
             fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
             fechafull = fecha_str.split(" ")
             fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
@@ -362,7 +364,7 @@ class SVGtoPdfImagesView(View):
 
         # Aquí puedes acceder a los campos del reporte
         # Convierte la cadena de fecha a un objeto datetime
-        fecha = report.create_at
+        fecha = report.created_at
         fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
         fechafull = fecha_str.split(" ")
         fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")
@@ -375,6 +377,8 @@ class SVGtoPdfImagesView(View):
         observations_and_results = report.observationsandresults
         signatures = report.signatures
         photos = report.photos
+
+
 
         try:
             # Consulta el modelo Report usando el ID
@@ -428,14 +432,30 @@ class SVGtoPdfImagesView(View):
 
         
         print(companieuser)
-        # Pasa los campos a la función GeneratePDFintoSVG
-        svg_code = GeneratePDFintoSVG(
-            questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
 
-        svg_code2 =  GenerateImagesPDFintoSVG(
-            photos, fecha_convertida, companieuser, companie, user, id_from_url
-        )
+        tank_format = json.loads(tank_identification)
+       
+
+
+        if 'formato' in tank_format and tank_format['formato'] == "Movil":
+                print('ingreso movil')
+                svg_code = GeneratePDFintoSVGMovil(
+                questions_mtto, question_views, questions_deterioration, tank_identification,
+                observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
+
+                svg_code2 =  GenerateImagesPDFintoSVGMovil(
+                photos, fecha_convertida, companieuser, companie, user, id_from_url
+            )
+        else:
+            print('ingreso fijo')   
+        # Pasa los campos a la función GeneratePDFintoSVG
+            svg_code = GeneratePDFintoSVG(
+                questions_mtto, question_views, questions_deterioration, tank_identification,
+                observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
+
+            svg_code2 =  GenerateImagesPDFintoSVG(
+                photos, fecha_convertida, companieuser, companie, user, id_from_url
+            )
         try:
             pdf_buffer = self.convert_svg_to_pdf(svg_code, svg_code2)
             print('tengo el pdf')
@@ -552,7 +572,7 @@ class CertificatePDFView(View):
 
         # Aquí puedes acceder a los campos del reporte
         # Convierte la cadena de fecha a un objeto datetime
-        fecha = report.create_at
+        fecha = report.created_at
         fecha_str = fecha.strftime("%Y-%m-%d %H:%M:%S.%f%z")
         fechafull = fecha_str.split(" ")
         fecha_objeto = datetime.strptime(fechafull[0], "%Y-%m-%d")

@@ -350,12 +350,10 @@ class SetStatusReject(View):
         # se borrar el archivo pdf
 
 
-class SVGtoPdfImagesView(View):
+class  SVGtoPdfImagesView(View):
     def get(self, request, *args, **kwargs):
         id_from_url = kwargs.get('id_report')
-
-        print(id_from_url)
-
+        
         try:
             # Consulta el modelo Report usando el ID
             report = Report.objects.get(id=id_from_url)
@@ -377,34 +375,40 @@ class SVGtoPdfImagesView(View):
         observations_and_results = report.observationsandresults
         signatures = report.signatures
         photos = report.photos
-
-
+        
+        
+        company = []
 
         try:
             # Consulta el modelo Report usando el ID
             user = User.objects.get(name=report.user)
+           
+            company.append(user.name)
         except User.DoesNotExist:
             return HttpResponse("El usuario no existe.")
-        print(user.email)
+        
 
         try:
             # Consulta el modelo Report usando el ID
-            companie = Companie.objects.get(name=report.companie)
+            companies = Companie.objects.get(name=report.companie)            
+            company.append(companies.name)
+            company.append(companies.nit)
         except Companie.DoesNotExist:
             return HttpResponse("la compañia no existe.")
-        print(companie.email)
+        
 
         try:
             # Consulta el modelo Report usando el ID
             companieuser = UserCompany.objects.get(usuario=report.userCompany)
+            company.append(companieuser.phone)
+            company.append(companieuser.address)
+            company.append(companieuser.usuario)
+            company.append(companieuser.contact)
         except UserCompany.DoesNotExist:
             return HttpResponse("El usuario de compañia no existe.")
-        print(companieuser)
-
-        # revisa si cumple en todo
        
 
-       
+        # revisa si cumple en todo    
 
         # revisa si cumple en todo
         cumple_instance_identification = Cumple(tank_identification)
@@ -434,43 +438,42 @@ class SVGtoPdfImagesView(View):
         print(companieuser)
 
         tank_format = json.loads(tank_identification)
-       
-
+            
 
         if 'formato' in tank_format and tank_format['formato'] == "Movil":
                 print('ingreso movil')
+                
+                print(' ')
+                
                 svg_code = GeneratePDFintoSVGMovil(
                 questions_mtto, question_views, questions_deterioration, tank_identification,
-                observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
+                observations_and_results, signatures, photos, fecha_convertida,company, id_from_url,CumpleCertificado)
 
-                svg_code2 =  GenerateImagesPDFintoSVGMovil(
-                photos, fecha_convertida, companieuser, companie, user, id_from_url
-            )
+                # Crear una respuesta de descarga con el archivo PDF
+                response = HttpResponse(svg_code, content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename=archivo.pdf'
+                return response 
+               
         else:
             print('ingreso fijo')   
-        # Pasa los campos a la función GeneratePDFintoSVG
-            svg_code = GeneratePDFintoSVG(
-                questions_mtto, question_views, questions_deterioration, tank_identification,
-                observations_and_results, signatures, photos, fecha_convertida, companieuser, companie, user, id_from_url,CumpleCertificado)
 
-            svg_code2 =  GenerateImagesPDFintoSVG(
-                photos, fecha_convertida, companieuser, companie, user, id_from_url
-            )
-        try:
-            pdf_buffer = self.convert_svg_to_pdf(svg_code, svg_code2)
-            print('tengo el pdf')
-        except Exception as e:
-            print(e)
+            
+        # Pasa los campos a la función GeneratePDFintoSVG
+            pdf_output = GeneratePDFintoSVG(
+                questions_mtto, question_views, questions_deterioration, tank_identification,
+                observations_and_results, signatures, photos, fecha_convertida,company, id_from_url,CumpleCertificado)
+
+            print(pdf_output)
         # Envía el PDF por correo electrónico
         # self.send_email_with_attachment(id_from_url, companie.name,
         #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
-        response = HttpResponse(
-            pdf_buffer["buffer"], content_type='application/pdf')
-        # response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
-        response['Content-Disposition'] = f'attachment; filename="ReporteQ-Checker_{id_from_url}.pdf"'
+       
 
-        os.remove(pdf_buffer["path"])
-        return response
+            # Crear una respuesta de descarga con el archivo PDF
+            response = HttpResponse(pdf_output, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename=archivo.pdf'
+            return response        
+        
 
     def convert_svg_to_pdf(self, svg_code, svg_code2):
 
@@ -583,8 +586,7 @@ class CertificatePDFView(View):
         questions_deterioration = report.questionsdeterioration
         tank_identification = report.tankidentification
         observations_and_results = report.observationsandresults
-        signatures = report.signatures
-        photos = report.photos
+        
 
         try:
             # Consulta el modelo Report usando el ID
@@ -639,6 +641,7 @@ class CertificatePDFView(View):
         else:
             print("no cumple")  
             CumpleCertificado = False;
+            return  
         print(CumpleCertificado);    
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GenerateCertificatePDFintoSVG(

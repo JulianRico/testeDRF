@@ -21,7 +21,7 @@ wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/dow
     dpkg -i wkhtmltopdf.deb && \
     apt-get install -f
     
-apt-get install libreoffice
+
 # Limpia el sistema
 apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb
 

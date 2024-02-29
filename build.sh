@@ -21,14 +21,14 @@ wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/dow
     dpkg -i wkhtmltopdf.deb && \
     apt-get install -f
     
-wget -q -O LibreOffice_7.6.5_Linux_x86-64_deb.tar.gz https://www.libreoffice.org/donate/dl/deb-x86_64/7.6.5/es/LibreOffice_7.6.5_Linux_x86-64_deb.tar.gz && \
-tar -zxvf LibreOffice_7.6.5_Linux_x86-64_deb.tar.gz && \
-cd LibreOffice_7.3.0.0_Linux_x86-64_deb/DEBS && \
+wget -q -O LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz https://download.documentfoundation.org/libreoffice/stable/24.2.1/deb/x86_64/LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz && \
+tar -zxvf LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz && \
+cd LibreOffice_24.2.1_Linux_x86-64_deb/DEBS && \
 sudo dpkg -i *.deb && \
 sudo apt-get install -f
 
 
-apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb LibreOffice_7.6.5_Linux_x86-64_deb.tar.gz LibreOffice_7.6.5_Linux_x86-64_deb
+apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz LibreOffice_24.2.1_Linux_x86-64_deb
 
 
 # Configuración de variables

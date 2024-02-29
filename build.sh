@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Actualiza los repositorios e instala las dependencias necesarias
-apt-get update && apt-get install -y \
+apt-get install -y \
     wget \
     xvfb \
     libfontconfig \
@@ -11,13 +10,10 @@ apt-get update && apt-get install -y \
     libxext6 \
     libxrender1 \
     xfonts-75dpi \
-    xfonts-base
-
+    xfonts-base \
+    libreoffice
 # Instala LibreOffice
-apt-get install -y libreoffice
 
-# Limpia el sistema
-apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Instala las dependencias de Python
 PYTHON_INTERPRETER=python

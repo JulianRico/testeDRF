@@ -24,7 +24,7 @@ wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/dow
 wget -q -O LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz https://download.documentfoundation.org/libreoffice/stable/24.2.1/deb/x86_64/LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz && \
 tar -zxvf LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz && \
 ls -l LibreOffice_24.2.1_Linux_x86-64_deb && \
-cd LibreOffice_24.2.1_Linux_x86-64_deb/DEBS_24.2.1 && \
+cd LibreOffice_24.2.1.2_Linux_x86-64_deb/DEBS/ && \
 sudo dpkg -i *.deb && \
 sudo apt-get install -f
 

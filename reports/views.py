@@ -4,10 +4,7 @@ import os
 from django.http import FileResponse, HttpResponse
 from django.views import View
 from reports.report_pdf_movil import GeneratePDFintoSVGMovil
-from reports.imagenes_pdf_movil import GenerateImagesPDFintoSVGMovil
-from reports.serializers import ReportSerializer
 from .report_pdf_estacionario import GeneratePDFintoSVG
-from .imagenes_pdf import GenerateImagesPDFintoSVG
 from .certificado_pdf import GenerateCertificatePDFintoSVG
 from .models import Report
 from datetime import datetime
@@ -16,8 +13,6 @@ from companies.models import Companie, UserCompany
 import pdfkit
 import platform
 import tempfile
-from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
 import yagmail
 from PyPDF2 import PdfMerger
 from .cumple import Cumple, CumpleDeterioration
@@ -475,97 +470,10 @@ class  SVGtoPdfImagesView(View):
             return response        
         
 
-    def convert_svg_to_pdf(self, svg_code, svg_code2):
-
-        try:
-            svg_height = "14in"
-            # Configura las opciones de pdfkit
-            options = {
-                'page-size': 'A4',
-                'margin-top': '7mm',
-                'margin-right': '20mm',
-                'margin-bottom': '0mm',
-                'margin-left': '20mm',
-                'encoding': "UTF-8",
-                'no-outline': None,
-                'dpi': 999,
-                'zoom': '1',
-                'viewport-size': f'x{svg_height}',
-                'image-dpi': 900
-            }
-
-            temp_svg_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".svg")
-            temp_svg_path.write(svg_code.encode())
-            temp_svg_path.close()            
-            
-
-            temp_svg_path2 = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".svg")
-            temp_svg_path2.write(svg_code2.encode())
-            temp_svg_path2.close()            
-            
-
-            if platform.system() == 'Windows':
-                config = pdfkit.configuration(
-                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
-            # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options, configuration=config)
-                pdfkit.from_file(temp_svg_path2.name, temp_svg_path2.name + '.pdf',
-                                 options=options, configuration=config)    
-            else:
-                # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options)
-                pdfkit.from_file(temp_svg_path2.name, temp_svg_path2.name + '.pdf',
-                                 options=options)          
-
-            # Combine the two PDFs into one
-            combined_pdf_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".pdf").name
-
-            
-            # Use PyPDF2 to combine PDFs
-            try:
-                pdf_merger = PdfMerger()
-                pdf_merger.append(temp_svg_path.name + '.pdf')
-                pdf_merger.append(temp_svg_path2.name + '.pdf')
-
-                with open(combined_pdf_path, 'wb') as combined_pdf_file:
-                    pdf_merger.write(combined_pdf_file)
-
-                pdf_merger.close()
-                
-            except Exception as e:
-                print(e)        
-           
-           
-           
-            
-            
-            # Remove temporary files
-            os.remove(temp_svg_path.name)
-            os.remove(temp_svg_path.name + '.pdf')
-            os.remove(temp_svg_path2.name)
-            os.remove(temp_svg_path2.name + '.pdf')
-
-            with open(combined_pdf_path, 'rb') as pdf_file:
-                pdf_buffer = pdf_file.read()           
-
-            print("PDF generado exitosamente en:", combined_pdf_path)
-
-            return {'buffer': pdf_buffer, 'path': combined_pdf_path}
-
-        except Exception as e:
-            print("Error al generar el PDF:", str(e))
-
-
+  
 class CertificatePDFView(View):
     def get(self, request, *args, **kwargs):
-        id_from_url = kwargs.get('id_report')
-
-       
+        id_from_url = kwargs.get('id_report')       
 
         try:
             # Consulta el modelo Report usando el ID
@@ -588,23 +496,35 @@ class CertificatePDFView(View):
         observations_and_results = report.observationsandresults
         
 
+        company = []
+
         try:
             # Consulta el modelo Report usando el ID
             user = User.objects.get(name=report.user)
+           
+            company.append(user.name)
         except User.DoesNotExist:
             return HttpResponse("El usuario no existe.")
         
 
         try:
             # Consulta el modelo Report usando el ID
-            companie = Companie.objects.get(name=report.companie)
+            companies = Companie.objects.get(name=report.companie)            
+            company.append(companies.name)
+            company.append(companies.nit)
+            company.append(companies.city)
+            company.append(companies.address)
         except Companie.DoesNotExist:
-            return HttpResponse("la compañia no existe.")        
+            return HttpResponse("la compañia no existe.")
+        
 
         try:
             # Consulta el modelo Report usando el ID
             companieuser = UserCompany.objects.get(usuario=report.userCompany)
-            
+            company.append(companieuser.phone)
+            company.append(companieuser.address)
+            company.append(companieuser.usuario)
+            company.append(companieuser.contact)
         except UserCompany.DoesNotExist:
             return HttpResponse("El usuario de compañia no existe.")   
 
@@ -640,75 +560,19 @@ class CertificatePDFView(View):
             CumpleCertificado = True;
         else:
             print("no cumple")  
-            CumpleCertificado = False;
-            return  
-        print(CumpleCertificado);    
+            CumpleCertificado = False; 
+           
+            #return HttpResponse(error_message)             
+        print(CumpleCertificado);
+            
         # Pasa los campos a la función GeneratePDFintoSVG
         svg_code = GenerateCertificatePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
-            observations_and_results, fecha_convertida, companieuser, companie, user, id_from_url, CumpleCertificado)
+            observations_and_results, fecha_convertida,  company,  id_from_url, CumpleCertificado)
 
-        pdf_buffer = self.convert_svg_to_pdf(svg_code)
+        response = HttpResponse(svg_code, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename=archivo{id_from_url}.pdf'
+        return response  
 
-        # Envía el PDF por correo electrónico
-        # self.send_email_with_attachment(id_from_url, companie.name,
-        #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
-        response = HttpResponse(
-            pdf_buffer["bufer"], content_type='application/pdf')
-        
-        # response = FileResponse(open(pdf_buffer, 'rb'), as_attachment=True)
-        response['Content-Disposition'] = f'attachment; filename="Certificado_Quality_Checker_{fecha_convertida}_{id_from_url}.pdf"'
-
-        os.remove(pdf_buffer["path"])
-        return response
-
-    def convert_svg_to_pdf(self, svg_code):
-
-        try:
-            svg_height = "14in"
-            # Configura las opciones de pdfkit
-            options = {
-                'page-size': 'A4',
-                'margin-top': '0mm',
-                'margin-right': '10mm',
-                'margin-bottom': '0mm',
-                'margin-left': '10mm',
-                'encoding': "UTF-8",
-                'no-outline': None,
-                'dpi': 999,               
-                
-                'image-dpi': 900
-            }
-
-            temp_svg_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".svg")
-            temp_svg_path.write(svg_code.encode())
-            temp_svg_path.close()
-
-            temp_pdf_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".pdf")
-            if platform.system() == 'Windows':
-
-                config = pdfkit.configuration(
-                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
-
-            # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options, configuration=config)
-
-            else:
-                # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options)
-            with open(temp_svg_path.name + '.pdf', 'rb') as pdf_file:
-                pdf_buffer = io.BytesIO(pdf_file.read())
-                # Eliminar los archivos temporales
-            os.remove(temp_svg_path.name)
-            os.remove(temp_svg_path.name + '.pdf')
-            print("PDF generado exitosamente en:", temp_pdf_path.name)
-
-            return {'bufer': pdf_buffer, 'path': temp_pdf_path.name}
-
-        except Exception as e:
-            print("Error al generar el PDF:", str(e))
+    
 

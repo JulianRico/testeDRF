@@ -41,6 +41,7 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     #datos usuario
     hoja['D9'] = fecha_convertida
     hoja['O5'] = id
+    hoja2['O5']= id
     hoja['C10'] = companie[1]
     hoja['C11'] = companie[2]
     hoja['C12'] = companie[5]
@@ -432,9 +433,8 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
     img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
     # firma de inspector - tamaño
-    print(img.width)
-    print(img.height)
-    hoja.add_image(img, 'J67')  # Agregar la imagen en la celda A1 o en la celda que desees
+    
+    hoja.add_image(img, 'K67')  # Agregar la imagen en la celda A1 o en la celda que desees
 
     #firma inspector
     routeFirmaInspector =JSONsignatures['firmaInspector']
@@ -447,9 +447,8 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
     img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
     # firma de inspector - tamaño
-    print(img.width)
-    print(img.height)
-    hoja.add_image(img, 'E67')  # Agregar la imagen en la celda A1 o en la celda que desees
+    
+    hoja.add_image(img, 'F67')  # Agregar la imagen en la celda A1 o en la celda que desees
     
     #registro fotografico 
     #placa
@@ -460,12 +459,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     # Cargar la imagen en la hoja de trabajo
     img = Image(image_bytes)
 
-    img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-    img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+    img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+    img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
     # firma de inspector - tamaño
-    print(img.width)
-    print(img.height)
-    hoja2.add_image(img, 'A10')  # Agregar la imagen en la celda A1 o en la celda que desees
+    
+    hoja2.add_image(img, 'B11')  # Agregar la imagen en la celda A1 o en la celda que desees
 
     #tanque
     routeTanque =JSONphotos['tanqueentero']
@@ -476,12 +474,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+      img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
       # firma de inspector - tamaño
-      print(img.width)
-      print(img.height)
-      hoja2.add_image(img, 'I10')  # Agregar la imagen en la celda A1 o en la celda que desees
+      
+      hoja2.add_image(img, 'J11')  # Agregar la imagen en la celda A1 o en la celda que desees
     #tanque placa
     routeTanquePlaca =JSONphotos['placaCarrotanque']
     if routeTanquePlaca:
@@ -491,12 +488,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+      img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
       # firma de inspector - tamaño
-      print(img.width)
-      print(img.height)
-      hoja2.add_image(img, 'A27')  # Agregar la imagen en la celda A1 o en la celda que desees
+      
+      hoja2.add_image(img, 'B28')  # Agregar la imagen en la celda A1 o en la celda que desees
 
     #accesorios
     routeAcce =JSONphotos['accesoriosenpruebadehermeticidad']
@@ -507,12 +503,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+      img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
       # firma de inspector - tamaño
-      print(img.width)
-      print(img.height)
-      hoja2.add_image(img, 'I27')  # Agregar la imagen en la celda A1 o en la celda que desees
+      
+      hoja2.add_image(img, 'J28')  # Agregar la imagen en la celda A1 o en la celda que desees
 
     #stiker
     routeStiker =JSONphotos['stickerinstalado']
@@ -523,12 +518,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+      img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
       # firma de inspector - tamaño
-      print(img.width)
-      print(img.height)
-      hoja2.add_image(img, 'A44')  # Agregar la imagen en la celda A1 o en la celda que desees
+      
+      hoja2.add_image(img, 'B45')  # Agregar la imagen en la celda A1 o en la celda que desees
     
     #foto defectoslogia 
     routeFdefecto =JSONphotos['defectosencontradosenlainspeccion']
@@ -539,12 +533,11 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
+      img.width = 500 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 275 #Puedes ajustar la altura de la imagen según tus necesidades
       # firma de inspector - tamaño
-      print(img.width)
-      print(img.height)
-      hoja2.add_image(img, 'I44')  # Agregar la imagen en la celda A1 o en la celda que desees
+      
+      hoja2.add_image(img, 'J45')  # Agregar la imagen en la celda A1 o en la celda que desees
 
       #defectologia
     routeFdefectore =JSONphotos['defectologiaderechazo']
@@ -555,9 +548,9 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       # Cargar la imagen en la hoja de trabajo
       img = Image(image_bytes)
 
-      img.width = img.width / 3.5 # Puedes ajustar el ancho de la imagen según tus necesidades
-      img.height = img.height * 0.3  # Puedes ajustar la altura de la imagen según tus necesidades
-      hoja2.add_image(img, 'A61')
+      img.width = 400 # Puedes ajustar el ancho de la imagen según tus necesidades
+      img.height = 200  # Puedes ajustar la altura de la imagen según tus necesidades
+      hoja2.add_image(img, 'F62')
 
 
 

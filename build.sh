@@ -11,7 +11,7 @@ apt-get install -y \
     libxrender1 \
     xfonts-75dpi \
     xfonts-base \
-    libreoffice
+    
 # Instala LibreOffice
 
 

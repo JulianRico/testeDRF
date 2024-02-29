@@ -21,9 +21,25 @@ wget -q -O wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/dow
     dpkg -i wkhtmltopdf.deb && \
     apt-get install -f
     
-
+# Descarga el archivo de instalación de LibreOffice
+wget https://download.documentfoundation.org/libreoffice/stable/7.3.0/deb/x86_64/LibreOffice_7.3.0_Linux_x86-64_deb.tar.gz
 # Limpia el sistema
+
+# Descomprime el archivo
+tar -zxvf LibreOffice_7.3.0_Linux_x86-64_deb.tar.gz
+
+# Cambia al directorio de instalación
+cd LibreOffice_7.3.0.0_Linux_x86-64_deb/DEBS
+
+# Instala LibreOffice
+sudo dpkg -i *.deb
+
+# Limpia los archivos temporales
+rm -rf LibreOffice_7.3.0_Linux_x86-64_deb.tar.gz LibreOffice_7.3.0.0_Linux_x86-64_deb
+
+
 apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb
+
 
 # Configuración de variables
 PYTHON_INTERPRETER=python

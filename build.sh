@@ -6,15 +6,8 @@ set -o errexit
 ls
 # Actualiza los repositorios e instala las dependencias necesarias
 apt-get update && apt-get install -y \
-    wget \
-    xvfb \
-    libfontconfig \
-    libjpeg-turbo8 \
-    libx11-6 \
-    libxext6 \
-    libxrender1 \
-    xfonts-75dpi \
-    xfonts-base
+    wget \    
+    
 
     
 wget -q -O LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz https://download.documentfoundation.org/libreoffice/stable/24.2.1/deb/x86_64/LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz && \

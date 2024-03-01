@@ -1,4 +1,6 @@
 import json
+from django.conf import settings
+from django.http import HttpResponse
 import requests
 import base64
 import openpyxl
@@ -31,9 +33,8 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     JSONsignatures = json.loads(signatures)
     JSONphotos = json.loads(photos)  
                     
-    
-    workbook = openpyxl.load_workbook('reports/tpMovil.xlsx')
-    print(workbook)
+    print(companie)
+    workbook = openpyxl.load_workbook('reports/tpMovil.xlsx')    
 
     # Obtener la hoja de trabajo (puedes ajustar esto según tu necesidad)
     hoja = workbook['SGQC-PGT-FT-06']
@@ -49,27 +50,30 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
     hoja['C14'] = companie[3]
     hoja['C15'] = companie[6]
     hoja['C13'] = companie[4]
+    hoja['F71'] = companie[0]
     
     #revision 
+    if aprobado == True:
+      hoja['F63'] = 'X'
+    else:
+      hoja['M63'] = 'X'    
     hoja['I63']=JSONquestions_mtto['numeroSticker']
     hoja['I64']=JSONquestions_mtto['cuales']
     if JSONquestions_mtto['ensayoNoDestructivo'] == True:
-     hoja['F63'] = 'X'
-    else:
-      hoja['M63'] = 'X'
+     hoja['G64'] = 'X'    
     if JSONquestions_mtto['fotografia'] == True:
      hoja['J65'] = 'X'
     if JSONquestions_mtto['fotografia'] == None:
      hoja['N65'] = 'X'
-    hoja['D66']=JSONquestions_mtto['serieEquiposUtilizados1']
-    hoja['C67'] =JSONquestions_mtto['serieEquiposUtilizados2'] 
+    hoja['C67']=JSONquestions_mtto['serieEquiposUtilizados1']
+    hoja['C68'] =JSONquestions_mtto['serieEquiposUtilizados2'] 
       
-    if JSONquestions_mtto['serieEquiposUtilizados3'] == None:
-     hoja['C68'] = 'X'
-    if JSONquestions_mtto['serieEquiposUtilizados4'] == None:
+    if JSONquestions_mtto['serieEquiposUtilizados3'] != None:
      hoja['C69'] = 'X'
-    if JSONquestions_mtto['serieEquiposUtilizados5'] == None:
+    if JSONquestions_mtto['serieEquiposUtilizados4'] != None:
      hoja['C70'] = 'X'
+    if JSONquestions_mtto['serieEquiposUtilizados5'] != None:
+     hoja['C71'] = 'X'
    #fajas
     if JSONquestion_views['fajasapoyo']['presenta']== 'Bueno':
      hoja['F36'] = 'X'
@@ -232,115 +236,103 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       hoja['P22']='X'
     #salpicadura
     if JSONtank_identification['salpicadura']['presenta']=='SÍ':
-     hoja['F23'] ='X' 
+     hoja['F23'] ='X'
+     hoja['P23'] ='X'
     if JSONtank_identification['salpicadura']['presenta']=='NO':
-     hoja['G23'] ='X' 
+     hoja['G23'] ='X'
+     hoja['O23'] ='X'
     if JSONtank_identification['salpicadura']['presenta']=='NA':
-     hoja['H23'] ='X' 
-    if JSONtank_identification['salpicadura']['cumple']==True:
-      hoja['O23']='X'
-    else:
-      hoja['P23']='X'
+     hoja['H23'] ='X'
+   
     #socavado
     if JSONtank_identification['socavado']['presenta']=='SÍ':
-     hoja['F24'] ='X' 
+     hoja['F24'] ='X'
+     hoja['P24'] ='X'
     if JSONtank_identification['socavado']['presenta']=='NO':
-     hoja['G24'] ='X' 
+     hoja['G24'] ='X'
+     hoja['O24'] ='X'
     if JSONtank_identification['socavado']['presenta']=='N/A':
-     hoja['H24'] ='X' 
-    if JSONtank_identification['socavado']['cumple']==True:
-      hoja['O24']='X'
-    else:
-      hoja['P24']='X'
+     hoja['H24'] ='X'
+
     #abolladura
     if JSONtank_identification['abolladura']['presenta']=='SÍ':
-     hoja['F25'] ='X' 
+     hoja['F25'] ='X'
+     hoja['P25'] ='X'
     if JSONtank_identification['abolladura']['presenta']=='NO':
-     hoja['G25'] ='X' 
+     hoja['G25'] ='X'
+     hoja['O25'] ='X'
     if JSONtank_identification['abolladura']['presenta']=='N/A':
-     hoja['H25'] ='X' 
-    if JSONtank_identification['abolladura']['cumple']==True:
-      hoja['O25']='X'
-    else:
-      hoja['P25']='X'
+     hoja['H25'] ='X'
+
     #hinchamiento
     if JSONtank_identification['hinchamiento']['presenta']=='SÍ':
-     hoja['F26'] ='X' 
+     hoja['F26'] ='X'
+     hoja['P26'] ='X'
     if JSONtank_identification['hinchamiento']['presenta']=='NO':
-     hoja['G26'] ='X' 
+     hoja['G26'] ='X'
+     hoja['O26'] ='X'
     if JSONtank_identification['hinchamiento']['presenta']=='N/A':
-     hoja['H26'] ='X' 
-    if JSONtank_identification['hinchamiento']['cumple']==True:
-      hoja['O26']='X'
-    else:
-      hoja['P26']='X'
- 
+     hoja['H26'] ='X'
+
     #hendidura
     if JSONtank_identification['hendiduras']['presenta']=='SÍ':
-     hoja['F27'] ='X' 
+     hoja['F27'] ='X'
+     hoja['P27'] ='X'
     if JSONtank_identification['hendiduras']['presenta']=='NO':
-     hoja['G27'] ='X' 
+     hoja['G27'] ='X'
+     hoja['O27'] ='X'
     if JSONtank_identification['hendiduras']['presenta']=='N/A':
-     hoja['H27'] ='X' 
-    if JSONtank_identification['hendiduras']['cumple']==True:
-      hoja['O27']='X'
-    else:
-      hoja['P27']='X'
+     hoja['H27'] ='X'
+
     #corrosion
     if JSONtank_identification['corrosion']['presenta']=='SÍ':
-     hoja['F28'] ='X' 
+     hoja['F28'] ='X'
+     hoja['P28'] ='X'
     if JSONtank_identification['corrosion']['presenta']=='NO':
-     hoja['G28'] ='X' 
+     hoja['G28'] ='X'
+     hoja['O28'] ='X'
     if JSONtank_identification['corrosion']['presenta']=='N/A':
-     hoja['H28'] ='X' 
-    if JSONtank_identification['corrosion']['cumple']==True:
-      hoja['O28']='X'
-    else:
-      hoja['P28']='X'
+     hoja['H28'] ='X'
+
     #resane
     if JSONtank_identification['resane']['presenta']=='SÍ':
-     hoja['F29'] ='X' 
+     hoja['F29'] ='X'
+     hoja['P29'] ='X'
     if JSONtank_identification['resane']['presenta']=='NO':
-     hoja['G29'] ='X' 
+     hoja['G29'] ='X'
+     hoja['O29'] ='X'
     if JSONtank_identification['resane']['presenta']=='N/A':
-     hoja['H29'] ='X' 
-    if JSONtank_identification['resane']['cumple']==True:
-      hoja['O29']='X'
-    else:
-      hoja['P29']='X'
+     hoja['H29'] ='X'
+
     #polimeres
     if JSONtank_identification['polimeros']['presenta']=='SÍ':
-     hoja['F30'] ='X' 
+     hoja['F30'] ='X'
+     hoja['P30'] ='X'
     if JSONtank_identification['polimeros']['presenta']=='NO':
-     hoja['G30'] ='X' 
+     hoja['G30'] ='X'
+     hoja['O30'] ='X'
     if JSONtank_identification['polimeros']['presenta']=='N/A':
-     hoja['H30'] ='X' 
-    if JSONtank_identification['polimeros']['cumple']==True:
-      hoja['O30']='X'
-    else:
-      hoja['P30']='X'
-    #estado corrosion 
+     hoja['H30'] ='X'
+
+    #estado corrosion
     if JSONtank_identification['EstadoConexionCorrosion']['presenta']=='SÍ':
-     hoja['F31'] ='X' 
+     hoja['F31'] ='X'
+     hoja['P31'] ='X'
     if JSONtank_identification['EstadoConexionCorrosion']['presenta']=='NO':
-     hoja['G31'] ='X' 
+     hoja['G31'] ='X'
+     hoja['O31'] ='X'
     if JSONtank_identification['EstadoConexionCorrosion']['presenta']=='N/A':
-     hoja['H31'] ='X' 
-    if JSONtank_identification['EstadoConexionCorrosion']['cumple']==True:
-      hoja['O31']='X'
-    else:
-      hoja['P31']='X'
-    #estado evidencia 
+     hoja['H31'] ='X'
+
+    #estado evidencia
     if JSONtank_identification['EstadoConexionEvidenciaGolpes']['presenta']=='SÍ':
-     hoja['F32'] ='X' 
+     hoja['F32'] ='X'
+     hoja['P32'] ='X'
     if JSONtank_identification['EstadoConexionEvidenciaGolpes']['presenta']=='NO':
-     hoja['G32'] ='X' 
+     hoja['G32'] ='X'
+     hoja['O32'] ='X'
     if JSONtank_identification['EstadoConexionEvidenciaGolpes']['presenta']=='N/A':
-     hoja['H32'] ='X' 
-    if JSONtank_identification['EstadoConexionEvidenciaGolpes']['cumple']==True:
-      hoja['O32']='X'
-    else:
-      hoja['P32']='X'
+     hoja['H32'] ='X'
     #estado desgaste
     if JSONtank_identification['EstadoConexionDesgaste']['presenta']=='SÍ':
      hoja['F33'] ='X' 
@@ -553,53 +545,34 @@ def GeneratePDFintoSVGMovil(questions_mtto, question_views, questions_deteriorat
       hoja2.add_image(img, 'F62')
 
 
+      # Guardar el archivo Excel editado en un nuevo archivo
+      workbook.save(f'reports/xlxs/reporte_tanque_movil_QC_{id}.xlsx')
+      # Offer the PDF file for download    
+      input_excel =  f'reports/xlxs/reporte_tanque_movil_QC_{id}.xlsx' 
+      output_pdf = f'reports/pdfs'
+      
+      # Comando para convertir Excel a PDF en Windows
+      if platform.system() == 'Windows':
+        cmd = f"start /wait soffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}"
+        subprocess.run(cmd, shell=True)          
+      else:
+        os.system(f"libreoffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}")  
+      # Obtener el nombre del archivo PDF creado
+      pdf_filename = os.path.splitext(os.path.basename(input_excel))[0] + ".pdf"
+      # Construir la ruta completa al archivo PDF  
+      
 
-
-
-
-    # Convertir la hoja de cálculo a un DataFrame de pandas
-    df = pd.DataFrame(hoja.values, columns=[col[0].value for col in hoja.iter_cols()])
-
-    # Crear un objeto BytesIO para almacenar la salida del archivo PDF
-    pdf_output = BytesIO()
-
-    # Crear un objeto PdfPages de matplotlib
-    pdf_pages = matplotlib.backends.backend_pdf.PdfPages(pdf_output)
-
-    # Tabular el DataFrame y agregarlo al PDF
-    fig, ax = plt.subplots()
-    ax.axis('off')  # Desactivar los ejes
-    table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center')
-
-    pdf_pages.savefig(fig, bbox_inches='tight', pad_inches=0.1)
-    pdf_pages.close()
-
-    # Hacer que BytesIO esté listo para ser leído
-    pdf_output.seek(0)
-
-    # Hacer algo con el PDF, por ejemplo, ofrecerlo para su descarga
-    # En este ejemplo, simplemente imprimiré el contenido del PDF
-    pdf_output
-
-
-    # Guardar el archivo Excel editado en un nuevo archivo
-    workbook.save(f'reports/nuevo_archivo_editado{id}.xlsx')
-    # Offer the PDF file for download
-    
-    input_excel =  f'reports/nuevo_archivo_editado{id}.xlsx' 
-    output_pdf = f'reports/nuevo_archivo_editado{id}.pdf'
-    
-    # Comando para convertir Excel a PDF en Windows
-    if platform.system() == 'Windows':
-      cmd = f"start /wait soffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}"
-      subprocess.run(cmd, shell=True)
-    else:
-     os.system(f"libreoffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}")  
-    # Obtener el nombre del archivo PDF creado
-    pdf_filename = os.path.splitext(os.path.basename(input_excel))[0] + ".pdf"
-    # Construir la ruta completa al archivo PDF
-    pdf_path = os.path.join(output_pdf, pdf_filename)
-    return pdf_path
+      pdf_path = os.path.join(settings.BASE_DIR, f'reports\pdfs', pdf_filename)
+      
+      if os.path.exists(pdf_path):
+          with open(pdf_path, 'rb') as pdf_file:
+              response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+              response['Content-Disposition'] = f'attachment; filename="{pdf_filename}"'
+              # Borrar el archivo PDF después de enviarlo como respuesta
+              os.remove(input_excel)
+              return {'response':response, 'path': pdf_path}
+      else:
+          return {'response': HttpResponse("El archivo PDF no existe", status=404)}
 
      
      

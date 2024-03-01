@@ -1,5 +1,6 @@
 import json
 import base64
+from django.conf import settings
 import openpyxl
 import pandas as pd
 from io import BytesIO
@@ -637,47 +638,37 @@ def GeneratePDFintoSVG(questions_mtto, question_views, questions_deterioration, 
     
     hoja.add_image(img, 'E73')  # Agregar la imagen en la celda A1 o en la celda que desees
     
-   
-    # Convertir la hoja de cálculo a un DataFrame de pandas
-    df = pd.DataFrame(hoja.values, columns=[col[0].value for col in hoja.iter_cols()])
-
-    # Crear un objeto BytesIO para almacenar la salida del archivo PDF
-    pdf_output = BytesIO()
-
-    # Crear un objeto PdfPages de matplotlib
-    pdf_pages = matplotlib.backends.backend_pdf.PdfPages(pdf_output)
-
-    # Tabular el DataFrame y agregarlo al PDF
-    fig, ax = plt.subplots()
-    ax.axis('off')  # Desactivar los ejes
-    table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center')
-
-    pdf_pages.savefig(fig, bbox_inches='tight', pad_inches=0.1)
-    pdf_pages.close()
-
-    # Hacer que BytesIO esté listo para ser leído
-    pdf_output.seek(0)
-
-    # Hacer algo con el PDF, por ejemplo, ofrecerlo para su descarga
-    # En este ejemplo, simplemente imprimiré el contenido del PDF
-    
-    pdf_output.read()
+      
 
     # Guardar el archivo Excel editado en un nuevo archivo
-    workbook.save(f'reports/nuevo_archivo_editado{id}.xlsx')
+    workbook.save(f'reports/xlxs/reporte_tanque_fijo_QC_{id}.xlsx')
     # Offer the PDF file for download    
-    input_excel =  f'reports/nuevo_archivo_editado{id}.xlsx' 
-    output_pdf = f'reports/nuevo_archivo_editado{id}.pdf'
+    input_excel =  f'reports/xlxs/reporte_tanque_fijo_QC_{id}.xlsx' 
+    output_pdf = f'reports/pdfs'
     
     # Comando para convertir Excel a PDF en Windows
     if platform.system() == 'Windows':
       cmd = f"start /wait soffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}"
-      subprocess.run(cmd, shell=True)
+      subprocess.run(cmd, shell=True)          
     else:
      os.system(f"libreoffice --headless --convert-to pdf {input_excel} --outdir {output_pdf}")  
     # Obtener el nombre del archivo PDF creado
     pdf_filename = os.path.splitext(os.path.basename(input_excel))[0] + ".pdf"
-    # Construir la ruta completa al archivo PDF
-    pdf_path = os.path.join(output_pdf, pdf_filename)
-    return pdf_path
+    # Construir la ruta completa al archivo PDF  
+    
+
+    pdf_path = os.path.join(settings.BASE_DIR, f'reports\pdfs', pdf_filename)
+
+    print(pdf_path)
+    if os.path.exists(pdf_path):
+        with open(pdf_path, 'rb') as pdf_file:
+            response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{pdf_filename}"'
+            # Borrar el archivo PDF después de enviarlo como respuesta
+            os.remove(input_excel)
+            return {'response':response, 'path': pdf_path}
+    else:
+        return {'response': HttpResponse("El archivo PDF no existe", status=404)}
+
+    
     

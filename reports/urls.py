@@ -10,7 +10,7 @@ router.register(r'api/reports', ReportViewSet, 'reports')
 urlpatterns = [
      path(r'api/reportreject/<int:id_report>/',
          SetStatusReject.as_view(), name='SetStatusReject'),
-     path(r'api/pdfcreateimages/<int:id_report>/',
+     path(r'api/pdfcreatereport/<int:id_report>/',
          SVGtoPdfImagesView.as_view(), name='ReporteImagenesPDF'),
      path(r'api/pdfcreatecertificate/<int:id_report>/',
          CertificatePDFView.as_view(), name='CertificadosPDF'),

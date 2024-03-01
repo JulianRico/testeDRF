@@ -10,12 +10,12 @@ from .models import Report
 from datetime import datetime
 from users.models import User
 from companies.models import Companie, UserCompany
-import pdfkit
-import platform
-import tempfile
+
 import yagmail
-from PyPDF2 import PdfMerger
+
 from .cumple import Cumple, CumpleDeterioration
+
+import threading
 
 
 class SVGtoPDFView(View):
@@ -117,58 +117,7 @@ class SVGtoPDFView(View):
 
         os.remove(pdf_buffer["path"])
         return response
-
-    def convert_svg_to_pdf(self, svg_code):
-
-        try:
-            svg_height = "14in"
-            # Configura las opciones de pdfkit
-            options = {
-                'page-size': 'A4',
-                'margin-top': '7mm',
-                'margin-right': '20mm',
-                'margin-bottom': '0mm',
-                'margin-left': '20mm',
-                'encoding': "UTF-8",
-                'no-outline': None,
-                'dpi': 999,
-                'zoom': '1',
-                'viewport-size': f'x{svg_height}',
-                'image-dpi': 900
-            }
-
-            temp_svg_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".svg")
-            temp_svg_path.write(svg_code.encode())
-            temp_svg_path.close()
-
-            temp_pdf_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".pdf")
-            if platform.system() == 'Windows':
-
-                config = pdfkit.configuration(
-                    wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
-
-            # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options, configuration=config)
-
-            else:
-                # Genera el PDF desde el contenido SVG
-                pdfkit.from_file(temp_svg_path.name, temp_svg_path.name + '.pdf',
-                                 options=options)
-            with open(temp_svg_path.name + '.pdf', 'rb') as pdf_file:
-                pdf_buffer = io.BytesIO(pdf_file.read())
-                # Eliminar los archivos temporales
-            os.remove(temp_svg_path.name)
-            os.remove(temp_svg_path.name + '.pdf')
-            print("PDF generado exitosamente en:", temp_pdf_path.name)
-
-            return {'bufer': pdf_buffer, 'path': temp_pdf_path.name}
-
-        except Exception as e:
-            print("Error al generar el PDF:", str(e))
-
+   
 # Create your views here.
 class SetSatus(View):
     def get(self, request, *args, **kwargs):
@@ -420,7 +369,10 @@ class  SVGtoPdfImagesView(View):
         cumple_objObservations = CumpleDeterioration()
         resultadoObservations = cumple_objObservations.buscar_cumple_principal(observations_and_results)        
 
-        CumpleCertificado: bool; 
+        CumpleCertificado: bool;
+
+
+
         if resultadoObservations and resultadoViews and resultadoDetarioration and cumpleidentification:
             print("todos cumple")
             CumpleCertificado = True;
@@ -440,14 +392,19 @@ class  SVGtoPdfImagesView(View):
                 
                 print(' ')
                 
-                svg_code = GeneratePDFintoSVGMovil(
+                pdf_movil = GeneratePDFintoSVGMovil(
                 questions_mtto, question_views, questions_deterioration, tank_identification,
                 observations_and_results, signatures, photos, fecha_convertida,company, id_from_url,CumpleCertificado)
 
+                def eliminar_archivo(ruta):
+                    os.remove(ruta)   
+
+                if pdf_movil['path']:
+                    temporizador = threading.Timer(5, eliminar_archivo, args=[pdf_movil['path']])
+                    temporizador.start()
                 # Crear una respuesta de descarga con el archivo PDF
-                response = HttpResponse(svg_code, content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename=archivo.pdf'
-                return response 
+                
+                return  pdf_movil['response']
                
         else:
             print('ingreso fijo')   
@@ -458,16 +415,18 @@ class  SVGtoPdfImagesView(View):
                 questions_mtto, question_views, questions_deterioration, tank_identification,
                 observations_and_results, signatures, photos, fecha_convertida,company, id_from_url,CumpleCertificado)
 
-            print(pdf_output)
+           
         # Envía el PDF por correo electrónico
         # self.send_email_with_attachment(id_from_url, companie.name,
         #           companie.email, companieuser.emailContact, user.email, fecha_convertida)
-       
-
+            def eliminar_archivo(ruta):
+                os.remove(ruta)                
+            if pdf_output['path']:
+                temporizador = threading.Timer(5, eliminar_archivo, args=[pdf_output['path']])
+                temporizador.start()
             # Crear una respuesta de descarga con el archivo PDF
-            response = HttpResponse(pdf_output, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename=archivo.pdf'
-            return response        
+            
+            return  pdf_output['response']      
         
 
   
@@ -563,16 +522,22 @@ class CertificatePDFView(View):
             CumpleCertificado = False; 
            
             #return HttpResponse(error_message)             
-        print(CumpleCertificado);
+        
             
         # Pasa los campos a la función GeneratePDFintoSVG
-        svg_code = GenerateCertificatePDFintoSVG(
+        certificado = GenerateCertificatePDFintoSVG(
             questions_mtto, question_views, questions_deterioration, tank_identification,
             observations_and_results, fecha_convertida,  company,  id_from_url, CumpleCertificado)
 
-        response = HttpResponse(svg_code, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename=archivo{id_from_url}.pdf'
-        return response  
+        def eliminar_archivo(ruta):
+            os.remove(ruta)   
+
+        if certificado['path']:
+            temporizador = threading.Timer(5, eliminar_archivo, args=[certificado['path']])
+            temporizador.start()
+                # Crear una respuesta de descarga con el archivo PDF
+                
+        return  certificado['response']  
 
     
 

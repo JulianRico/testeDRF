@@ -3,7 +3,7 @@
 set -o errexit
 
 #!/bin/bash
-
+ls
 # Actualiza los repositorios e instala las dependencias necesarias
 apt-get update && apt-get install -y \
     wget \
@@ -23,7 +23,7 @@ cd LibreOffice_24.2.1.2_Linux_x86-64_deb/DEBS/ && \
 sudo dpkg -i *.deb && \
 sudo apt-get install -f
 
-
+cd ../../
 apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* wkhtmltopdf.deb LibreOffice_24.2.1_Linux_x86-64_deb.tar.gz LibreOffice_24.2.1_Linux_x86-64_deb
 
 

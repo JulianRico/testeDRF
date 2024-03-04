@@ -1,0 +1,13 @@
+{
+    "builds": [{
+        "src": "drfapiqc/wsgi.py",
+        "use": "@vercel/python",
+        "config": { "maxLambdaSize": "45mb", "runtime": "python3.11" }
+    }],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "drfapiqc/wsgi.py"
+        }
+    ]
+}
